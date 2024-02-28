@@ -1,11 +1,97 @@
-{% extends "base.html" %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ product.name }} - Product Details</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #a8f0a9;
+            margin: 0;
+            padding: 0;
+        }
 
-{%block content%}
-<div class="page">
-<!-- THE ITEMS WILL GO HERE -->    
-    <h2>HEADER</h2>
-    <p>Description</p>
-    <img src="{{ url_for('static', filename='flask.jpeg') }}" alt="Descriptive Text for Image" style="width:30%; height:auto; margin: 20px;margin-top: -80px;">
-</div>
+        .container {
+            max-width: 800px;
+            margin: 20px auto;
+            padding: 20px;
+            background-color: #dff6c2;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
 
-{% endblock %}
+        h1 {
+            text-align: center;
+            color: #333;
+        }
+
+        .product-details {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .product-item {
+            padding: 20px;
+            border-bottom: 1px solid #ccc;
+            transition: background-color 0.3s ease;
+        }
+
+        .product-title {
+            font-weight: bold;
+            color: #333;
+        }
+
+        .product-price {
+            color: #555;
+        }
+        .rating-review-btn {
+            display: inline-block;
+            padding: 10px 20px;
+            background-color: #008CBA;
+            color: #fff;
+            text-decoration: none;
+            border-radius: 5px;
+            transition: background-color 0.3s ease;
+        }
+
+        .rating-review-btn:hover {
+            background-color: #005F6B;
+        }
+
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>{{ product.name }}</h1>
+        <ul class="product-details">
+            <li class="product-item">
+                <strong>SKU:</strong> {{ product.sku }}
+            </li>
+            <li class="product-item">
+                <strong>Price:</strong> ${{ product.price }}
+            </li>
+            <li class="product-item">
+                <strong>Description:</strong> {{ product.item_desc }}
+            </li>
+            <li class="product-item">
+                <strong>Category:</strong> {{ product.category }}
+            </li>
+            <li class="product-item">
+                <strong>Stock:</strong> {{ product.stock }}
+            </li>
+            <li class="product-item">
+                <strong>Rating:</strong> {{ product.item_star }}
+            </li>
+            <li class="product-item">
+                <strong>Sizes:</strong> {{ product.itme_sizes }}
+            </li>
+            <li class="product-item">
+                <strong>Color:</strong> {{ product.color }}
+            </li>
+            <a href="/product/{{ product.Item_ID }}/rating_review" class="rating-review-btn">Rate and Review this Product</a>
+        </ul>
+    </div>
+</body>
+</html>

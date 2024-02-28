@@ -2,7 +2,7 @@ from app import db
 
 class Items(db.Model):
     __tablename__ = 'item'
-    Item_ID = db.Column(db.Integer,unique=True, primary_key=True)
+    Item_ID = db.Column(db.String(80),unique=True, primary_key=True)
     sku = db.Column(db.String(80), unique=True, nullable=False)
     name = db.Column(db.String(120), unique=True, nullable=False)
     price = db.Column(db.Integer, nullable=False)

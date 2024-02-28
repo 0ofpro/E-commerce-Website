@@ -36,6 +36,9 @@
             padding: 20px;
             border-bottom: 1px solid #ccc;
             transition: background-color 0.3s ease;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
         }
 
         .product-item:hover {
@@ -49,6 +52,8 @@
 
         .product-price {
             color: #555;
+            font-size: 16px; /* Adjust font size */
+            margin-top: 5px; /* Add margin between title and price */
         }
 
         .pagination {
@@ -70,19 +75,87 @@
         .pagination a:hover {
             background-color: #005F6B;
         }
+
+        .search-form {
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .search-input {
+            padding: 8px;
+            width: 60%;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            margin-right: 10px;
+        }
+
+        .search-button {
+            padding: 8px 16px;
+            background-color: #008CBA;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .search-button:hover {
+            background-color: #005F6B;
+        }
+
+        .view-details-btn {
+            background-color: #008CBA;
+            color: #fff;
+            padding: 6px 12px; /* Smaller padding */
+            border-radius: 5px;
+            text-decoration: none;
+            transition: background-color 0.3s ease;
+            margin-left: 10px; /* Add margin to the left */
+        }
+
+        .view-details-btn:hover {
+            background-color: #005F6B;
+        }
     </style>
 </head>
 <body>
     <div class="container">
         <h1>All Products</h1>
 
+        <!-- Search form -->
+        <form class="search-form" action="/search" method="GET">
+            <input class="search-input" type="text" name="query" placeholder="Search products...">
+            <button class="search-button" type="submit">Search</button>
+        </form>
+
+         <!-- Search form with filters -->
+         <form class="search-form" action="/search" method="GET">
+            <!-- <input class="search-input" type="text" name="query" placeholder="Search products..."> -->
+            <label for="price">Price:</label>
+            <input class="filter-input" type="number" name="price" id="price" min="0">
+            <label for="category">Category:</label>
+            <select class="filter-input" name="category" id="category">
+                <option value="">Select Category</option>
+                {% for category in categories %}
+                    <option value="{{ category }}">{{ category }}</option>
+                {% endfor %}
+            </select>
+            <label for="item_star">Item Star:</label>
+            <input class="filter-input" type="number" name="item_star" id="item_star" min="0" max="5">
+            <button class="search-button" type="submit">Search</button>
+        </form>
+
         <ul class="product-list">
             <!-- Loop over products and display product names and prices -->
             {% for product in products.items %}
-                <li class="product-item">
-                    <span class="product-title">{{ product.name }}</span><br>
-                    <span class="product-price">Price: ${{ product.price }}</span>
-                </li>
+            <li class="product-item">
+                <div>
+                    <span class="product-title">{{ product.name }}</span>
+                    <span class="product-price">${{ product.price }}</span>
+                </div>
+                <a href="/product/{{ product.Item_ID }}" class="view-details-btn">View Details</a>
+            </li>
+
             {% endfor %}
         </ul>
 
@@ -90,9 +163,7 @@
             {% if products.has_prev %}
                 <a href="?page={{ page - 1 }}">Previous</a>
             {% endif %}
-
             Page {{ page }} of {{ total_pages }}
-
             {% if products.has_next %}
                 <a href="?page={{ page + 1 }}">Next</a>
             {% endif %}
