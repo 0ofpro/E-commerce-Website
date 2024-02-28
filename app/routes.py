@@ -26,3 +26,6 @@ def show_products():
 @app.route('/products')
 def products():
     return render_template('products.html')
+@app.route('/product')
+def products():
+    return render_template('product.html')
