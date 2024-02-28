@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simple Navbar Website</title>
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background-color: #dfe3ee; /* Light pastel color */
+        }
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background-color: #6e6ea0;
+            color: white;
+            padding: 10px;
+            height: 60px;
+        }
+        .navbar a, .dropdown-content a {
+            color: white;
+            text-decoration: none;
+            padding: 10px;
+        }
+        .dropdown {
+            position: relative;
+            display: inline-block;
+        }
+        .dropdown:hover .dropdown-content {
+            display: block;
+        }
+        .dropdown-content {
+            display: none;
+            position: absolute;
+            background-color: #333;
+            box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+            z-index: 1;
+        }
+        .dropdown-content a {
+            display: block;
+        }
+        .search-bar input[type="text"] {
+            padding: 7px;
+            margin: 5px 0;
+            margin-right: 50px;
+            border: none;
+            border-radius: 5px;
+            width: 850px;
+            
+        }
+        .icons {
+            display: inline;
+            margin-right: 100px;
+        }
+        .page {
+            background-color: white;
+            width: 300mm;
+            height: 200mm;
+            margin: 40px auto;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            overflow: hidden;
+        }
+        .text {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+        }
+        h2 {
+             display: flex;
+             justify-content: flex-end;
+             max-width: 60%;
+        }
+        p {
+            display: flex;
+            justify-content: flex-end;
+            margin-left: -20px;
+            max-width: 60%;
+       }
+    </style>
+</head>
+<body>
+    <div class="navbar">
+        <div class="website-name">Website Name</div>
+        <div class="dropdown">
+            <a href="#">Categories</a>
+            <div class="dropdown-content">
+                <a href="#">Category 1</a>
+                <a href="#">Category 2</a>
+                <a href="#">Category 3</a>
+            </div>
+        </div>
+        <div class="search-bar">
+            <input type="text" placeholder="🔍 Search...">
+        </div>
+        <div class="icons">
+            <a href="#">👤 Account</a>
+            <a href="#">🛒 Cart</a>
+        </div>
+    </div>
+
+    <!-- Main content of your website goes here -->
+    <div class="content">
+        {% block content %}
+        <div class="page">
+
+        </div>
+
+        {%endblock%}
+    </div>
+</body>
+</html>
