@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+
+{%block content%}
+<div class="page">
+<!-- THE ITEMS WILL GO HERE -->    
+    <h2>HEADER</h2>
+    <p>Description</p>
+    <img src="{{ url_for('static', filename='flask.jpeg') }}" alt="Descriptive Text for Image" style="width:30%; height:auto; margin: 20px;margin-top: -80px;">
+</div>
+
+{% endblock %}

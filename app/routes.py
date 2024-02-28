@@ -8,3 +8,6 @@ from math import ceil
 def hello_world():
     return render_template('index.html')
 
+@app.route('/product')
+def products():
+    return render_template('product.html')
