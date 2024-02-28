@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>All Products</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #a8f0a9;
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 20px auto;
+            padding: 20px;
+            background-color: #dff6c2;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            text-align: center;
+            color: #333;
+        }
+
+        .product-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .product-item {
+            padding: 20px;
+            border-bottom: 1px solid #ccc;
+            transition: background-color 0.3s ease;
+        }
+
+        .product-item:hover {
+            background-color: #e9e9c0;
+        }
+
+        .product-title {
+            font-weight: bold;
+            color: #333;
+        }
+
+        .product-price {
+            color: #555;
+        }
+
+        .pagination {
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .pagination a {
+            display: inline-block;
+            padding: 8px 16px;
+            margin: 0 5px;
+            background-color: #008CBA;
+            color: #fff;
+            text-decoration: none;
+            border-radius: 5px;
+            transition: background-color 0.3s ease;
+        }
+
+        .pagination a:hover {
+            background-color: #005F6B;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>All Products</h1>
+
+        <ul class="product-list">
+            <!-- Loop over products and display product names and prices -->
+            {% for product in products.items %}
+                <li class="product-item">
+                    <span class="product-title">{{ product.name }}</span><br>
+                    <span class="product-price">Price: ${{ product.price }}</span>
+                </li>
+            {% endfor %}
+        </ul>
+
+        <div class="pagination">
+            {% if products.has_prev %}
+                <a href="?page={{ page - 1 }}">Previous</a>
+            {% endif %}
+
+            Page {{ page }} of {{ total_pages }}
+
+            {% if products.has_next %}
+                <a href="?page={{ page + 1 }}">Next</a>
+            {% endif %}
+        </div>
+    </div>
+</body>
+</html>
