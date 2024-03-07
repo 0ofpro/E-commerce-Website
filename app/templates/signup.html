@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign Up</title>
+    <style>
+        .signup-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-top: 50px;
+        }
+        .signup-photo {
+            flex: 1;
+            padding: 20px;
+        }
+        .signup-photo img {
+            width: 75%;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        .signup-form {
+            flex: 1;
+            background-color: #92568b; /* Original color */
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            margin-right: 50px; 
+        }
+        .signup-form label {
+            font-weight: bold;
+        }
+        .signup-form input[type="text"],
+        .signup-form input[type="email"],
+        .signup-form input[type="password"] {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 15px;
+            border: 1px solid #a48a8a;
+            border-radius: 5px;
+            box-sizing: border-box;
+            font-size: 16px;
+        }
+        .signup-form input[type="submit"] {
+            width: 100%;
+            padding: 10px;
+            background-color: #7f6a8f; /* Original color */
+            color: #dfcdde;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        .signup-form input[type="submit"]:hover {
+            background-color: #300b4b; /* Original color */
+        }
+    </style>
+</head>
+<body>
+
+<div class="signup-container">
+    <div class="signup-form">
+        <h1>Sign Up Here!</h1>
+        <form action="/signup" method="post">
+            <label for="username">Username:</label><br>
+            <input type="text" id="username" name="username" required><br>
+            <label for="email">Email:</label><br>
+            <input type="email" id="email" name="email" required><br>
+            <label for="password">Password:</label><br>
+            <input type="password" id="password" name="password" required><br><br>
+            <input type="submit" value="Sign Up">
+        </form>
+    </div>
+</div>
+
+</body>
+</html>

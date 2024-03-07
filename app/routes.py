@@ -1,6 +1,6 @@
 from app import app, db
-from flask import render_template, request, redirect, url_for,flash,session
-from app.models import Items
+from flask import render_template, request, redirect, url_for,flash,session,send_from_directory,abort
+from app.models import Items,User
 from sqlalchemy.sql import text,or_
 from math import ceil
 
@@ -30,7 +30,9 @@ def product_page(Item_ID):
     product = Items.query.filter_by(Item_ID=Item_ID).first()
     if product is None:
         abort(404)
-    return render_template('product.html', product=product)
+    product1 = Items.query.filter_by(Item_ID=Item_ID).first()
+    image_path = product1.pic
+    return render_template('product.html', product=product,image_path=image_path)
 
 @app.route('/product/<string:Item_ID>/rating_review', methods=['GET', 'POST'])
 def product_rating_review(Item_ID):
@@ -38,6 +40,7 @@ def product_rating_review(Item_ID):
         rating = request.form.get('rating')
         review = request.form.get('review')
         # Process rating and review data, e.g., save to database
+
         return 'Rating: {}, Review: {}'.format(rating, review)
     return render_template('rating_review.html', Item_ID=Item_ID)
 
@@ -86,3 +89,26 @@ def search_products():
     total_pages = products.total // per_page + (products.total % per_page > 0)
 
     return render_template('show_products.html', products=products, page=page, total_pages=total_pages, categories=categories)
+
+@app.route('/product_pic')
+def product_pic():
+    product1 = Items.query.filter_by(Item_ID='P10001').first()
+    if product1 is None:
+        abort(404)
+    image_path = product1.pic
+    return render_template('product_pic.html', image_path=image_path)
+
+
+
+@app.route('/signup', methods=['GET', 'POST'])
+def signup():
+    if request.method == 'POST':
+        username = request.form['username']
+        email = request.form['email']
+        password = request.form['password']
+        new_user = User(username=username, email=email, password=password)
+        db.session.add(new_user)
+        db.session.commit()
+        session['username'] = username
+        return redirect(url_for('signup'))
+    return render_template('signup.html')
