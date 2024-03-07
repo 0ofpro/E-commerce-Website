@@ -1,6 +1,6 @@
 from app import app, db
 from flask import render_template, request, redirect, url_for,flash,session,send_from_directory,abort
-from app.models import Items,User
+from app.models import Items,User,UserPreference
 from sqlalchemy.sql import text,or_
 from math import ceil
 
@@ -106,9 +106,50 @@ def signup():
         username = request.form['username']
         email = request.form['email']
         password = request.form['password']
+        categories = request.form.getlist('categories[]')
+
         new_user = User(username=username, email=email, password=password)
         db.session.add(new_user)
         db.session.commit()
+
+        for category in categories:
+            preference = UserPreference(user_id=new_user.id, category=category)
+            db.session.add(preference)
+        db.session.commit()
+
         session['username'] = username
-        return redirect(url_for('signup'))
+        return redirect(url_for('login'))
     return render_template('signup.html')
+
+@app.route('/login', methods=['GET', 'POST'])
+def login():
+    if request.method == 'POST':
+        username = request.form['username']
+        password = request.form['password']
+        user = User.query.filter_by(username=username).first()
+        if user and user.password == password:
+            # Authentication successful, store user id in session
+            session['username'] = user.username
+            return redirect(url_for('dashboard', username=user.username))
+        else:
+            flash('Invalid username or password', 'error')
+    return render_template('login.html')
+
+@app.route('/dashboard')
+def dashboard():
+    # Retrieve username from session
+    username = session.get('username')
+    if username:
+        # Fetch user preferences
+        user = User.query.filter_by(username=username).first()
+        preferences = UserPreference.query.filter_by(user_id=user.id).all()
+        
+        # Extract categories from user preferences
+        categories = [preference.category for preference in preferences]
+        
+        # Fetch recommended products based on user preferences
+        recommended_products = Items.query.filter(Items.category.in_(categories)).order_by(Items.item_star.desc()).limit(5).all()
+        
+        return render_template('dashboard.html', username=username, recommended_products=recommended_products)
+    else:
+        return redirect(url_for('login'))

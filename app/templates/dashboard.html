@@ -1,0 +1,19 @@
+{% extends 'base.html' %}
+
+{% block head %}
+    <title>Dashboard</title>
+{% endblock %}
+
+{% block content %}
+    <div class="content">
+        <div class="welcome-message">
+            <h1>Welcome, {{ username }}!</h1>
+            <h2>Recommended Products:</h2>
+            <ul>
+                {% for product in recommended_products %}
+                    <li>{{ product.name }} - {{ product.category }} - {{ product.item_star }}</li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+{% endblock %}
