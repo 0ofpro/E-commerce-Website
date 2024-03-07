@@ -79,11 +79,64 @@
             margin-left: -20px;
             max-width: 60%;
        }
+
+
+       .signup-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-top: 50px;
+        }
+        .signup-photo {
+            flex: 1;
+            padding: 20px;
+        }
+        .signup-photo img {
+            width: 75%;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        .signup-form {
+            flex: 1;
+            background-color: #6e6ea0; /* Original color */
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            margin-right: 50px; 
+        }
+        .signup-form label {
+            font-weight: bold;
+        }
+        .signup-form input[type="text"],
+        .signup-form input[type="email"],
+        .signup-form input[type="password"] {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 15px;
+            border: 1px solid #a48a8a;
+            border-radius: 5px;
+            box-sizing: border-box;
+            font-size: 16px;
+        }
+        .signup-form input[type="submit"] {
+            width: 100%;
+            padding: 10px;
+            background-color: #474795; /* Original color */
+            color: #dfcdde;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        .signup-form input[type="submit"]:hover {
+            background-color:  #9696b8; /* Original color */
+        }
+        
     </style>
 </head>
 <body>
     <div class="navbar">
-        <div class="website-name">Website Name</div>
+        <div class="website-name">SHOP-NONSTOP!</div>
 
             <a href="/show_products">All Products</a>
             
@@ -92,7 +145,14 @@
             <input type="text" placeholder="🔍 Search...">
         </div>
         <div class="icons">
-            <a href="#">👤 Account</a>
+
+            <div class="dropdown">
+                <a href="#">👤Account</a>
+                <div class="dropdown-content">
+                    <a href="/signup"> Create Account</a>
+                    <a href="/login">🔐 Login</a>
+                </div>
+            </div>
             <a href="#">🛒 Cart</a>
         </div>
     </div>
