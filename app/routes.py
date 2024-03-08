@@ -1,6 +1,6 @@
 from app import app, db
 from flask import render_template, request, redirect, url_for,flash,session,send_from_directory,abort,jsonify
-from app.models import Items,User,UserPreference, RatingReview,Wishlist
+from app.models import Items,User,UserPreference, RatingReview,Wishlist,Cart
 from sqlalchemy.sql import text,or_
 from math import ceil
 
@@ -238,3 +238,84 @@ def logout():
     session.clear()
     # Redirect the user to the login page or any other page you want
     return redirect(url_for('login'))
+
+
+
+@app.route('/add_to_cart', methods=['POST'])
+def add_to_cart():
+    if request.method == 'POST':
+        username = session.get('username')
+        user = User.query.filter_by(username=username).first()
+        user_id = user.id # Corrected line
+
+        # Check if the user is logged in
+        if not user_id:
+            flash('Please log in to add items to your cart.', 'error')
+            return redirect(url_for('login'))
+
+        # Get item ID from the form
+        item_id = request.form.get('item_id')
+
+        # Check if the item is already in the user's wishlist
+        existing_cart_item = Cart.query.filter_by(user_id=user_id, item_id=item_id).first()
+        if existing_cart_item:
+            flash('Item is already in your cart', 'error')
+        else:
+            # Add the item to the user's wishlist
+            cart_item = Cart(user_id=user_id, item_id=item_id)
+            db.session.add(cart_item)
+            db.session.commit()
+            flash('Item added to cart successfully', 'success')
+
+        return redirect(url_for('product_page', Item_ID=item_id))
+    
+
+@app.route('/cart')
+def cart():        
+    username = session.get('username')
+        #user_id = session.get('user_id')
+    if username:
+            # Fetch user preferences
+            user = User.query.filter_by(username=username).first()
+
+            #fetch user's wishlist items
+            cart_items = Cart.query.filter_by(user_id=user.id).all()
+            
+            # Extract item IDs from wishlist items
+            item_ids = [item.item_id for item in cart_items]
+            
+            # Fetch wishlist products based on item IDs
+            cart_products = Items.query.filter(Items.Item_ID.in_(item_ids)).all()
+            total_price = round(sum([(item.price) for item in cart_products]), 2)
+            return render_template('cart.html', username=username,cart_products=cart_products,total_price=total_price)
+    else:
+            return redirect(url_for('product'))
+
+
+@app.route('/remove_from_cart/<item_id>', methods=['POST'])
+def remove_from_cart(item_id):
+    if request.method == 'POST':
+        # Retrieve the user's ID from the session
+        username = session.get('username')
+
+        if username:
+            user = User.query.filter_by(username=username).first()
+            
+            if user:
+                user_id = user.id
+                
+                # Check if the item exists in the user's wishlist
+                cart_item = Cart.query.filter_by(user_id=user_id, item_id=item_id).first()
+                if cart_item:
+                    # Remove the item from the wishlist
+                    db.session.delete(cart_item)
+                    db.session.commit()
+                    flash('Item removed from cart successfully', 'success')
+                else:
+                    flash('Item not found in your cart', 'error')
+            else:
+                flash('User not found', 'error')
+        else:
+            flash('Please log in to remove items from your cart.', 'error')
+
+        return redirect(url_for('cart'))
