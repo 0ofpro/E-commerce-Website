@@ -1,6 +1,6 @@
 from app import app, db
 from flask import render_template, request, redirect, url_for,flash,session,send_from_directory,abort
-from app.models import Items,User,UserPreference
+from app.models import Items,User,UserPreference, RatingReview
 from sqlalchemy.sql import text,or_
 from math import ceil
 
@@ -30,18 +30,26 @@ def product_page(Item_ID):
     product = Items.query.filter_by(Item_ID=Item_ID).first()
     if product is None:
         abort(404)
+    
     product1 = Items.query.filter_by(Item_ID=Item_ID).first()
+    ratings_reviews = RatingReview.query.filter_by(item_id=Item_ID).all()
     image_path = product1.pic
-    return render_template('product.html', product=product,image_path=image_path)
+    return render_template('product.html', product=product,image_path=image_path,ratings_reviews=ratings_reviews)
 
 @app.route('/product/<string:Item_ID>/rating_review', methods=['GET', 'POST'])
 def product_rating_review(Item_ID):
     if request.method == 'POST':
         rating = request.form.get('rating')
         review = request.form.get('review')
-        # Process rating and review data, e.g., save to database
 
-        return 'Rating: {}, Review: {}'.format(rating, review)
+        # Create a new entry for rating and review in the database
+        rating_review = RatingReview(item_id=Item_ID, rating=rating, review=review)
+        db.session.add(rating_review)
+        db.session.commit()
+
+        return redirect(url_for('product_page', Item_ID=Item_ID))
+        #return 'Rating: {}, Review: {}'.format(rating, review)
+    
     return render_template('rating_review.html', Item_ID=Item_ID)
 
 
