@@ -76,6 +76,22 @@
         text-align: center;
         margin-top: 20px;
     }
+    .deep-purple-btn {
+        display: inline-block;
+        padding: 10px 20px;
+        background-color: #00008B; /* Deep purple color */
+        color: #ffffff;
+        text-align: center;
+        text-decoration: none;
+        border-radius: 5px;
+        font-weight: bold;
+        transition: background-color 0.3s ease;
+    }
+    
+    .deep-purple-btn:hover {
+        background-color: #5E35B1; /* Slightly darker purple on hover */
+        color: #ffffff;
+    }
 </style>
 
 <div class="content">
@@ -107,6 +123,9 @@
     </div>
     <div class="total-price-container">
         <h3>Total Price: ${{ total_price }}</h3>
+    </div>
+    <div class="total-price-container">
+        <a href="{{ url_for('checkout') }}" class="deep-purple-btn">Proceed to Checkout</a>
     </div>
 </div>
 
