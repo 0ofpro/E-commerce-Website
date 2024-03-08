@@ -157,7 +157,7 @@ def dashboard():
         
         # Fetch recommended products based on user preferences
         recommended_products = Items.query.filter(Items.category.in_(categories)).order_by(Items.item_star.desc()).limit(5).all()
-        
+
         return render_template('dashboard.html', username=username, recommended_products=recommended_products)
     else:
         return redirect(url_for('login'))
