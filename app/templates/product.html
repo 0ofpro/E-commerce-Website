@@ -100,7 +100,14 @@
         <li class="product-item"><strong>Price:</strong> ${{ product.price }}</li>
         <li class="product-item"><strong>Description:</strong> {{ product.item_desc }}</li>
         <li class="product-item"><strong>Category:</strong> {{ product.category }}</li>
-        <li class="product-item"><strong>Stock:</strong> {{ product.stock }}</li>
+
+        <li class="product-item"><strong>Stock:</strong> 
+            {% if product.stock <= 10 %}
+                <span style="color: red;">Low stock!</span> 
+            {% endif %}
+            {{ product.stock }}
+        </li>
+
         <li class="product-item"><strong>Rating:</strong> {{ product.item_star }}</li>
         <li class="product-item"><strong>Sizes:</strong> {{ product.itme_sizes }}</li>
         <li class="product-item"><strong>Color:</strong> {{ product.color }}</li>
