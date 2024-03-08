@@ -63,3 +63,26 @@ class Cart(db.Model):
 
     def __repr__(self):
         return f"<Cart(user_id='{self.user_id}', item_id='{self.item_id}')>"
+    
+order_items = db.Table('order_items',
+    db.Column('order_id', db.Integer, db.ForeignKey('order.id'), primary_key=True),
+    db.Column('item_id', db.String(80), db.ForeignKey('item.Item_ID'), primary_key=True)
+)
+
+class Order(db.Model):
+    __tablename__ = 'order'
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    phone = db.Column(db.String(20), nullable=False)
+    address = db.Column(db.String(100), nullable=False)
+    total_price = db.Column(db.Float, nullable=False)
+    items = db.relationship('Items', secondary=order_items,
+                            backref=db.backref('orders', lazy='dynamic'))
+
+    def __repr__(self):
+        # Fetching item IDs from the associated items
+        item_ids = [item.Item_ID for item in self.items]
+        return f"<Order(id='{self.id}', user_id='{self.user_id}', items={item_ids})>"
+
+
+

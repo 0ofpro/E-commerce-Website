@@ -1,6 +1,6 @@
 from app import app, db
 from flask import render_template, request, redirect, url_for,flash,session,send_from_directory,abort,jsonify
-from app.models import Items,User,UserPreference, RatingReview,Wishlist,Cart
+from app.models import Items, Order,User,UserPreference, RatingReview,Wishlist,Cart
 from sqlalchemy.sql import text,or_
 from math import ceil
 
@@ -319,3 +319,78 @@ def remove_from_cart(item_id):
             flash('Please log in to remove items from your cart.', 'error')
 
         return redirect(url_for('cart'))
+
+
+@app.route('/checkout', methods=['GET', 'POST'])
+def checkout():
+    if 'username' not in session:
+        flash('Please login to proceed to checkout', 'error')
+        return redirect(url_for('login'))
+    
+    username = session.get('username')
+    user = User.query.filter_by(username=username).first()
+    
+    if request.method == 'POST':
+        phone = request.form['phone']
+        address = request.form['address']
+        # Assuming cart_items and total_price calculation happens before this point
+        cart_items = Cart.query.filter_by(user_id=user.id).all()
+        total_price = sum(item.price for item in cart_items)  # You'll need to adjust based on your actual model
+
+        # Create and save the order
+        order = Order(user_id=user.id, phone=phone, address=address, total_price=total_price)
+        db.session.add(order)
+        db.session.commit()
+        
+        # Assuming redirection to a payment or confirmation page
+        # return redirect(url_for('order_confirmation'))  # Assuming an order_confirmation function exists
+
+    cart_items = Cart.query.filter_by(user_id=user.id).all()
+    cart_products = [Items.query.filter_by(Item_ID=item.item_id).first() for item in cart_items]
+    total_price = sum(item.price for item in cart_products)
+    
+    return render_template('checkout.html', user=user, cart_products=cart_products, total_price=total_price)
+
+
+@app.route('/place_order', methods=['POST'])
+def place_order():
+    # Retrieve user_id from session
+    username = session.get('username')
+    user = User.query.filter_by(username=username).first()
+    user_id=user.id
+    if user_id is None:
+        # Redirect to login if user_id not found in session
+        return redirect(url_for('login'))
+
+    phone = request.form['phone']
+    address = request.form['address']
+    
+    # Calculate total_price from cart items
+    cart_items = Cart.query.filter_by(user_id=user_id).all()
+    total_price = sum(item.item.price for item in cart_items)  # Make sure this line matches your models
+
+    # Correctly passing user_id to the Order constructor
+    order = Order(user_id=user_id, phone=phone, address=address, total_price=total_price)
+    db.session.add(order)
+    
+    # Retrieve cart items for the user
+    cart_items = Cart.query.filter_by(user_id=user_id).all()
+    
+    # Add items to the order and clear the cart
+    for cart_item in cart_items:
+        # Find the actual item instance based on cart_item.item_id
+        item = Items.query.filter_by(Item_ID=cart_item.item_id).first()
+        if item:
+            order.items.append(item)
+        
+        # Remove the item from the cart
+        db.session.delete(cart_item)
+    
+    db.session.commit()
+    
+    return redirect(url_for('order_confirmation', order_id=order.id))
+
+@app.route('/order_confirmation/<int:order_id>')
+def order_confirmation(order_id):
+    order = Order.query.get_or_404(order_id)
+    return render_template('order_confirmation.html', order=order)
