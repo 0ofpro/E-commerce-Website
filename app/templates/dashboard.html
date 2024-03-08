@@ -3,92 +3,126 @@
 {% block content %}
 <title>Dashboard</title>
 <style>
-        /* Additional styles for dashboard */
-        .products {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-            gap: 20px;
-            margin-top: 20px;
-        }
+    /* Additional styles for dashboard */
+    .products {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+        gap: 20px;
+        margin-top: 20px;
+    }
 
-        .product {
-            background-color: #ffffff;
-            border-radius: 10px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-            overflow: hidden;
-            transition: transform 0.3s ease;
-        }
+    .product {
+        background-color: #ffffff;
+        border-radius: 10px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        overflow: hidden;
+        transition: transform 0.3s ease;
+    }
 
-        .product:hover {
-            transform: translateY(-5px);
-        }
+    .product:hover {
+        transform: translateY(-5px);
+    }
 
-        .product-details {
-            padding: 20px;
-        }
+    .product-details {
+        padding: 20px;
+    }
 
-        .product-details h3 {
-            margin: 0;
-            font-size: 18px;
-            color: #333;
-        }
+    .product-details h3 {
+        margin: 0;
+        font-size: 18px;
+        color: #333;
+    }
 
-        .product-details p {
-            margin: 5px 0;
-            font-size: 14px;
-            color: #888;
-        }
+    .product-details p {
+        margin: 5px 0;
+        font-size: 14px;
+        color: #888;
+    }
 
-        .product-image {
-            width: 100%;
-            height: auto;
-            border-radius: 10px 10px 0 0;
-        }
+    .product-image {
+        width: 100%;
+        height: auto;
+        border-radius: 10px 10px 0 0;
+    }
 
-        .product-button {
-            display: flex;
-            justify-content: center;
-            margin-top: 10px;
-        }
+    .product-button {
+        display: flex;
+        justify-content: center;
+        margin-top: 10px;
+    }
 
-        .product-button a {
-            padding: 8px 16px;
-            background-color: #007bff;
-            color: #fff;
-            text-decoration: none;
-            border-radius: 5px;
-            transition: background-color 0.3s ease;
-        }
+    .product-button a,
+    .product-button button {
+        padding: 8px 16px;
+        background-color: #007bff;
+        color: #fff;
+        text-decoration: none;
+        border-radius: 5px;
+        transition: background-color 0.3s ease;
+        cursor: pointer;
+    }
 
-        .product-button a:hover {
-            background-color: #0056b3;
-        }
-        .productimage {
-            max-width: 50%;
-            height: auto;
-        }
-        
+    .product-button a:hover,
+    .product-button button:hover {
+        background-color: #0056b3;
+    }
 
+    .productimage {
+        max-width: 50%;
+        height: auto;
+    }
 </style>
 
-    <div class="content">
-        <div class="welcome-message">
-            <h1>Welcome, {{ username }}!</h1>
-            <h2>Recommended Products:</h2>
-            <div class="products">
-                {% for product in recommended_products %}
-                    <div class="product">
-                        <img src="{{ product.pic }}" alt="Product Image" class="productimage">
-                        <div class="product-details">
-                            <h3>{{ product.name }}</h3>
-                            <p>Category: {{ product.category }}</p>
-                            <div class="product-button">
-                                <a href="/product/{{ product.Item_ID }}">Show Products</a>
-                            </div>
-                        </div>
+<div class="content">
+    <div class="welcome-message">
+        <h1>Welcome, {{ username }}!</h1>
+        <h2>Recommended Products:</h2>
+        <div class="products">
+            {% for product in recommended_products %}
+            <div class="product">
+                <img src="{{ product.pic }}" alt="Product Image" class="productimage">
+                <div class="product-details">
+                    <h3>{{ product.name }}</h3>
+                    <p>Category: {{ product.category }}</p>
+                    <div class="product-button">
+                        <a href="/product/{{ product.Item_ID }}">Show Products</a>
                     </div>
-                {% endfor %}
+                    <div class="product-button">
+                        <form action="{{ url_for('add_to_wishlist') }}" method="POST">
+                            <input type="hidden" name="item_id" value="{{ product.Item_ID }}">
+                            <input type="hidden" name="user_id" value="{{ user_id }}">
+                            <button type="submit">Add to Wishlist</button>
+                        </form>
+                    </div>
+                </div>
             </div>
+            {% endfor %}
         </div>
     </div>
+    <h2>My Wishlist:</h2>
+        <div class="products">
+            {% for item in wishlist_products %}
+            <div class="product">
+                <img src="{{ item.pic }}" alt="Product Image" class="productimage">
+                <div class="product-details">
+                    <h3>{{ item.name }}</h3>
+                    <p>Category: {{ item.category }}</p>
+                    <div class="product-button">
+                        <a href="/product/{{ item.Item_ID }}">Show Products</a>
+                    </div>
+                </div>
+                <div class="product-button">
+                    <form action="{{ url_for('remove_from_wishlist', item_id=item.Item_ID) }}" method="POST">
+                        <input type="hidden" name="item_id" value="{{ item.Item_ID }}">
+                        <input type="hidden" name="user_id" value="{{ user_id }}">
+                        <button type="submit">Remove from Wishlist</button>
+                    </form>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+
+
 {% endblock %}
