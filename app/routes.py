@@ -1,6 +1,6 @@
 from app import app, db
 from flask import render_template, request, redirect, url_for,flash,session,send_from_directory,abort,jsonify
-from app.models import Items, Order,User,UserPreference, RatingReview,Wishlist,Cart
+from app.models import Items, Order,User,UserPreference, RatingReview,Wishlist,Cart, Deals
 from sqlalchemy.sql import text,or_
 from math import ceil
 from datetime import datetime
@@ -8,8 +8,10 @@ from itertools import groupby
 
 
 @app.route('/')
-def hello_world():
-    return render_template('index.html')
+def index():
+    # Query the Deals table to retrieve products with deals
+    deals_products = Deals.query.all()
+    return render_template('index.html', deals_products=deals_products)
 
 @app.route('/show_products', methods=['GET'])
 def show_products():
@@ -222,6 +224,24 @@ def dashboard():
     else:
         return redirect(url_for('login'))
 
+@app.route('/order_history')
+def order_history():
+    # Retrieve username from session
+    username = session.get('username')
+
+    if username:
+        # Fetch user preferences
+        user = User.query.filter_by(username=username).first()
+        
+        # Fetch order history for the user
+        order_history = Order.query.filter_by(user_id=user.id).all()
+
+        # Group order history by date if necessary
+        grouped_order_history = group_orders_by_date(order_history)
+
+        return render_template('order_history.html', username=username, grouped_order_history=grouped_order_history)
+    else:
+        return redirect(url_for('login'))
 
 
 def group_orders_by_date(order_history):
@@ -348,7 +368,7 @@ def cart():
             total_price = round(sum([(item.price) for item in cart_products]), 2)
             return render_template('cart.html', username=username,cart_products=cart_products,total_price=total_price)
     else:
-            return redirect(url_for('product'))
+            return redirect(url_for('login'))
 
 
 @app.route('/remove_from_cart/<item_id>', methods=['POST'])
