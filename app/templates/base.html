@@ -18,6 +18,7 @@
             color: white;
             padding: 10px;
             height: 60px;
+            position: relative;
         }
         .navbar a, .dropdown-content a {
             color: white;
@@ -47,13 +48,42 @@
             margin-right: 50px;
             border: none;
             border-radius: 5px;
-            width: 850px;
-
+            width: 100%;
         }
         .icons {
-            display: inline;
-            margin-right: 100px;
+            display: flex;
+            align-items: center;
         }
+        .icons a {
+            margin-right: 20px;
+            position: relative;
+        }
+        .order-tracker-button {
+            background-color: #000; /* Black color */
+            color: white;
+            border: none;
+            border-radius: 10px; /* Rounded corners */
+            padding: 10px 15px;
+            font-size: 14px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .order-tracker-button:hover {
+            background-color: #222; /* Darker black color on hover */
+        }
+
+        @media screen and (max-width: 600px) {
+            .navbar {
+                flex-direction: column;
+                align-items: flex-start;
+                height: auto;
+            }
+            .icons {
+                margin-top: 10px;
+            }
+        }
+
         .page {
             background-color: white;
             width: 300mm;
@@ -98,7 +128,7 @@
             padding: 20px;
             border-radius: 10px;
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            margin-right: 50px; 
+            margin-right: 50px;
         }
         .signup-form label {
             font-weight: bold;
@@ -127,26 +157,18 @@
         .signup-form input[type="submit"]:hover {
             background-color:  #9696b8; /* Original color */
         }
-        
-
-
-    
-    
-        
     </style>
 </head>
 <body>
     <div class="navbar">
         <div class="website-name">SHOP-NONSTOP!</div>
 
-            <a href="/show_products">All Products</a>
-            
-        
+        <a href="/show_products">All Products</a>
+
         <div class="search-bar">
             <input type="text" placeholder="🔍 Search...">
         </div>
         <div class="icons">
-
             <div class="dropdown">
                 <a href="#">👤Account</a>
                 <div class="dropdown-content">
@@ -156,6 +178,7 @@
                 </div>
             </div>
             <a href="/cart">🛒 Cart</a>
+            <button class="order-tracker-button" onclick="window.location.href='/track_order'">Track Order</button>
         </div>
     </div>
 
@@ -165,8 +188,7 @@
         <div class="page">
 
         </div>
-
-        {%endblock%}
+        {% endblock %}
     </div>
 </body>
 </html>

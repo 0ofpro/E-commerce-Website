@@ -1,4 +1,5 @@
 from app import db
+from datetime import datetime
 
 class Items(db.Model):
     __tablename__ = 'item'
@@ -76,6 +77,8 @@ class Order(db.Model):
     phone = db.Column(db.String(20), nullable=False)
     address = db.Column(db.String(100), nullable=False)
     total_price = db.Column(db.Float, nullable=False)
+    date_created = db.Column(db.DateTime, default=datetime.utcnow())
+    tracking_level = db.Column(db.String(50), nullable=True)
     items = db.relationship('Items', secondary=order_items,
                             backref=db.backref('orders', lazy='dynamic'))
 

@@ -4,6 +4,28 @@
 <title>Dashboard</title>
 <style>
     /* Additional styles for dashboard */
+    .container {
+        margin-top: 20px;
+        padding: 20px;
+        border-radius: 10px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    /* Order History Container */
+    .order-history-container {
+        background-color: #e6f7ff; /* Light Blue */
+    }
+
+    /* Recommended Products Container */
+    .recommended-products-container {
+        background-color: #f2e6ff; /* Light Purple */
+    }
+
+    /* Wishlist Container */
+    .wishlist-container {
+        background-color: #e6ffe6; /* Light Green */
+    }
+
     .products {
         display: grid;
         grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
@@ -76,53 +98,98 @@
 <div class="content">
     <div class="welcome-message">
         <h1>Welcome, {{ username }}!</h1>
-        <h2>Recommended Products:</h2>
+
+        <!-- Order History Container -->
+
+
+<div class="container">
+        <h2>Order History:</h2>
         <div class="products">
-            {% for product in recommended_products %}
-            <div class="product">
-                <img src="{{ product.pic }}" alt="Product Image" class="productimage">
-                <div class="product-details">
-                    <h3>{{ product.name }}</h3>
-                    <p>Category: {{ product.category }}</p>
-                    <div class="product-button">
-                        <a href="/product/{{ product.Item_ID }}">Show Products</a>
+            {% if grouped_order_history %}
+                {% for order_date, orders in grouped_order_history.items() %}
+                    <div class="order-group">
+                        <h3>Order Group {{ loop.index }} - {{ order_date }}</h3>
+                        {% for order in orders %}
+                            <div class="product">
+                                {% if order.items %}
+                                    <img src="{{ order.items[0].pic }}" alt="Product Image" class="productimage">
+                                {% else %}
+                                    <!-- Handle case when order has no items -->
+                                {% endif %}
+                                <div class="product-details">
+                                    <h4>Order ID: {{ order.id }}</h4>
+                                    <p>Total Price: ${{ order.total_price }}</p>
+                                    {% if order.date_created %}
+                                        <p>Order Date: {{ order.date_created.strftime('%Y-%m-%d %H:%M:%S') }}</p>
+                                    {% else %}
+                                        <!-- Handle case when order.date_created is None -->
+                                    {% endif %}
+                                    <div class="product-button">
+                                        <a href="#">View Order Details</a>
+                                    </div>
+                                </div>
+                            </div>
+                        {% endfor %}
                     </div>
-                    <div class="product-button">
-                        <form action="{{ url_for('add_to_wishlist') }}" method="POST">
-                            <input type="hidden" name="item_id" value="{{ product.Item_ID }}">
-                            <input type="hidden" name="user_id" value="{{ user_id }}">
-                            <button type="submit">Add to Wishlist</button>
-                        </form>
-                    </div>
-                </div>
-            </div>
-            {% endfor %}
+                {% endfor %}
+            {% else %}
+                <p>No order history available.</p>
+            {% endif %}
         </div>
     </div>
-    <h2>My Wishlist:</h2>
-        <div class="products">
-            {% for item in wishlist_products %}
-            <div class="product">
-                <img src="{{ item.pic }}" alt="Product Image" class="productimage">
-                <div class="product-details">
-                    <h3>{{ item.name }}</h3>
-                    <p>Category: {{ item.category }}</p>
-                    <div class="product-button">
-                        <a href="/product/{{ item.Item_ID }}">Show Products</a>
+
+        <!-- Recommended Products Container -->
+        <div class="container">
+            <h2>Recommended Products:</h2>
+            <div class="products">
+                {% for product in recommended_products %}
+                    <div class="product">
+                        <img src="{{ product.pic }}" alt="Product Image" class="productimage">
+                        <div class="product-details">
+                            <h3>{{ product.name }}</h3>
+                            <p>Category: {{ product.category }}</p>
+                            <div class="product-button">
+                                <a href="/product/{{ product.Item_ID }}">Show Products</a>
+                            </div>
+                            <div class="product-button">
+                                <form action="{{ url_for('add_to_wishlist') }}" method="POST">
+                                    <input type="hidden" name="item_id" value="{{ product.Item_ID }}">
+                                    <input type="hidden" name="user_id" value="{{ user_id }}">
+                                    <button type="submit">Add to Wishlist</button>
+                                </form>
+                            </div>
+                        </div>
                     </div>
-                </div>
-                <div class="product-button">
-                    <form action="{{ url_for('remove_from_wishlist', item_id=item.Item_ID) }}" method="POST">
-                        <input type="hidden" name="item_id" value="{{ item.Item_ID }}">
-                        <input type="hidden" name="user_id" value="{{ user_id }}">
-                        <button type="submit">Remove from Wishlist</button>
-                    </form>
-                </div>
+                {% endfor %}
             </div>
-            {% endfor %}
+        </div>
+
+        <!-- Wishlist Container -->
+        <div class="container">
+            <h2>My Wishlist:</h2>
+            <div class="products">
+                {% for item in wishlist_products %}
+                    <div class="product">
+                        <img src="{{ item.pic }}" alt="Product Image" class="productimage">
+                        <div class="product-details">
+                            <h3>{{ item.name }}</h3>
+                            <p>Category: {{ item.category }}</p>
+                            <div class="product-button">
+                                <a href="/product/{{ item.Item_ID }}">Show Products</a>
+                            </div>
+                        </div>
+                        <div class="product-button">
+                            <form action="{{ url_for('remove_from_wishlist', item_id=item.Item_ID) }}" method="POST">
+                                <input type="hidden" name="item_id" value="{{ item.Item_ID }}">
+                                <input type="hidden" name="user_id" value="{{ user_id }}">
+                                <button type="submit">Remove from Wishlist</button>
+                            </form>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
         </div>
     </div>
 </div>
-
 
 {% endblock %}
