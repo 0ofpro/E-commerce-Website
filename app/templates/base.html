@@ -5,10 +5,16 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Simple Navbar Website</title>
     <style>
+        @font-face {
+        font-family: Font1;
+        src: url(/static/Butler.otf);
+        }
+        
         body {
             margin: 0;
-            font-family: Arial, sans-serif;
+            font-family: Font1,Arial, sans-serif;
             background-color: #dfe3ee; /* Light pastel color */
+            color: #615f5f;
         }
         .navbar {
             display: flex;
@@ -18,6 +24,7 @@
             color: white;
             padding: 10px;
             height: 60px;
+            position: relative;
         }
         .navbar a, .dropdown-content a {
             color: white;
@@ -47,13 +54,42 @@
             margin-right: 50px;
             border: none;
             border-radius: 5px;
-            width: 850px;
-
+            width: 100%;
         }
         .icons {
-            display: inline;
-            margin-right: 100px;
+            display: flex;
+            align-items: center;
         }
+        .icons a {
+            margin-right: 20px;
+            position: relative;
+        }
+        .order-tracker-button {
+            background-color: #000; /* Black color */
+            color: white;
+            border: none;
+            border-radius: 10px; /* Rounded corners */
+            padding: 10px 15px;
+            font-size: 14px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .order-tracker-button:hover {
+            background-color: #222; /* Darker black color on hover */
+        }
+
+        @media screen and (max-width: 600px) {
+            .navbar {
+                flex-direction: column;
+                align-items: flex-start;
+                height: auto;
+            }
+            .icons {
+                margin-top: 10px;
+            }
+        }
+
         .page {
             background-color: white;
             width: 300mm;
@@ -73,12 +109,8 @@
              justify-content: flex-end;
              max-width: 60%;
         }
-        p {
-            display: flex;
-            justify-content: flex-end;
-            margin-left: -20px;
-            max-width: 60%;
-       }
+
+
 
 
        .signup-container {
@@ -102,7 +134,7 @@
             padding: 20px;
             border-radius: 10px;
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            margin-right: 50px; 
+            margin-right: 50px;
         }
         .signup-form label {
             font-weight: bold;
@@ -131,32 +163,39 @@
         .signup-form input[type="submit"]:hover {
             background-color:  #9696b8; /* Original color */
         }
-        
 
-
-    
-    
+        @font-face {
+        font-family: myFont;
+        src: url(/static/Flicker.otf);
+        }
         
+        .website-name {
+            font-family: myFont;
+            font-size: 55px;
+        }
     </style>
 </head>
 <body>
     <div class="navbar">
-        <div class="website-name">SHOP-NONSTOP!</div>
-
-            <a href="/show_products">All Products</a>
-            
-        
-        <div class="search-bar">
-            <input type="text" placeholder="🔍 Search...">
-        </div>
         <div class="icons">
+            <a href="/" class="website-name">SHOP-NONSTOP!</a>
+        </div>
 
+        <div class="icons">
+            <a href="/show_products">All Products</a>
             <div class="dropdown">
-                <a href="#">👤Account</a>
+                <a href="dashboard">👤Account</a>
                 <div class="dropdown-content">
                     <a href="/signup"> Create Account</a>
                     <a href="/login">🔐 Login</a>
                     <a href="/login">➡️ Logout</a>
+                </div>
+            </div>
+            <div class="dropdown">
+                <a href="/"> 🛍️ Orders</a>
+                <div class="dropdown-content">
+                    <a href="/track_order"> Track order</a>
+                    <a href="/dashboard"> Order History</a>
                 </div>
             </div>
             <a href="/cart">🛒 Cart</a>
@@ -169,8 +208,7 @@
         <div class="page">
 
         </div>
-
-        {%endblock%}
+        {% endblock %}
     </div>
 </body>
 </html>

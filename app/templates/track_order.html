@@ -1,0 +1,110 @@
+{% extends "base.html" %}
+
+{% block content %}
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 0;
+        background-color: #f4f4f4;
+    }
+
+    .container {
+        width: 90%; /* Adjusted width */
+        margin: auto;
+        overflow: hidden;
+    }
+
+    h2 {
+        color: #333;
+        text-align: center;
+    }
+
+    .orders {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: space-around;
+        margin-top: 20px;
+    }
+
+    .order {
+        width: calc(30% - 20px); /* Adjusted width */
+        background-color: #fff;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+        margin: 10px;
+        padding: 15px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        box-sizing: border-box;
+        overflow: hidden; /* Ensure content does not overflow */
+    }
+
+    .order h3 {
+        color: #333;
+        margin-bottom: 10px; /* Added margin */
+    }
+
+    .order p {
+        margin: 5px 0;
+        color: #666;
+    }
+
+    .product-image {
+        width: 100%;
+        height: auto;
+        margin-bottom: 10px;
+        border-radius: 5px; /* Added border radius */
+    }
+
+    .order-details {
+        text-align: center; /* Center align */
+    }
+
+    .order-details a {
+        display: inline-block;
+        padding: 5px 10px;
+        background-color: #3498db;
+        color: #fff;
+        text-decoration: none;
+        border-radius: 3px;
+        transition: background-color 0.3s;
+    }
+
+    .order-details a:hover {
+        background-color: #2980b9;
+    }
+</style>
+
+<div class="container">
+    <h2>Your Orders:</h2>
+    <div class="orders">
+        {% if order_history %}
+            {% for order in order_history %}
+                <div class="order">
+                    <h3>Order ID: {{ order.id }}</h3>
+                    <p>Status: {{ order.tracking_level }}</p>
+                    <p>Total Price: ${{ order.total_price }}</p>
+                    {% if order.date_created %}
+                        <p>Order Date: {{ order.date_created.strftime('%Y-%m-%d %H:%M:%S') }}</p>
+                    {% else %}
+                        <!-- Handle case when order.date_created is None -->
+                    {% endif %}
+
+                    {% if order.items %}
+                        <div class="product-image">
+                            <img src="{{ order.items[0].pic }}" alt="Product Image" width="150">
+                        </div>
+                    {% endif %}
+
+                    <div class="order-details">
+                        <a href="dashboard">View Order Details</a>
+                    </div>
+                </div>
+            {% endfor %}
+        {% else %}
+            <p>No orders to track.</p>
+        {% endif %}
+    </div>
+</div>
+
+{% endblock %}
