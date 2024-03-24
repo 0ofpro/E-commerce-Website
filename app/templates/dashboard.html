@@ -13,29 +13,29 @@
 
     /* Order History Container */
     .order-history-container {
-        background-color: #e6f7ff; /* Light Blue */
+        background-color: #d4e0e6; /* Light Blue */
     }
 
     /* Recommended Products Container */
     .recommended-products-container {
-        background-color: #f2e6ff; /* Light Purple */
+        background-color: #d4cfeb; /* Light Purple */
     }
 
     /* Wishlist Container */
     .wishlist-container {
-        background-color: #e6ffe6; /* Light Green */
+        background-color: #9c8baa; /* Light Green */
     }
 
     .products {
         display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); /* Adjusted width */
         gap: 20px;
         margin-top: 20px;
     }
 
     .product {
-        background-color: #ffffff;
-        border-radius: 10px;
+        background-color: #ece7e7;
+        border-radius: 5px;
         box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
         overflow: hidden;
         transition: transform 0.3s ease;
@@ -46,12 +46,12 @@
     }
 
     .product-details {
-        padding: 20px;
+        padding: 10px; /* Adjusted padding */
     }
 
-    .product-details h3 {
+    .product-details h4 {
         margin: 0;
-        font-size: 18px;
+        font-size: 16px; /* Adjusted font size */
         color: #333;
     }
 
@@ -63,7 +63,8 @@
 
     .product-image {
         width: 100%;
-        height: auto;
+        height: 150px; /* Fixed height for all images */
+        object-fit: cover; /* Ensures images cover the entire space */
         border-radius: 10px 10px 0 0;
     }
 
@@ -75,7 +76,7 @@
 
     .product-button a,
     .product-button button {
-        padding: 8px 16px;
+        padding: 6px 12px; /* Adjusted padding */
         background-color: #007bff;
         color: #fff;
         text-decoration: none;
@@ -90,7 +91,7 @@
     }
 
     .productimage {
-        max-width: 50%;
+        max-width: 100%;
         height: auto;
     }
 </style>
@@ -100,53 +101,51 @@
         <h1>Welcome, {{ username }}!</h1>
 
         <!-- Order History Container -->
-
-
-<div class="container">
-        <h2>Order History:</h2>
-        <div class="products">
-            {% if grouped_order_history %}
-                {% for order_date, orders in grouped_order_history.items() %}
-                    <div class="order-group">
-                        <h3>Order Group {{ loop.index }} - {{ order_date }}</h3>
-                        {% for order in orders %}
-                            <div class="product">
-                                {% if order.items %}
-                                    <img src="{{ order.items[0].pic }}" alt="Product Image" class="productimage">
-                                {% else %}
-                                    <!-- Handle case when order has no items -->
-                                {% endif %}
-                                <div class="product-details">
-                                    <h4>Order ID: {{ order.id }}</h4>
-                                    <p>Total Price: ${{ order.total_price }}</p>
-                                    {% if order.date_created %}
-                                        <p>Order Date: {{ order.date_created.strftime('%Y-%m-%d %H:%M:%S') }}</p>
+        <div class="order-history-container">
+            <h2>Order History:</h2>
+            <div class="products">
+                {% if grouped_order_history %}
+                    {% for order_date, orders in grouped_order_history.items() %}
+                        <div class="order-group">
+                            <h3>Order Group {{ loop.index }} - {{ order_date }}</h3>
+                            {% for order in orders %}
+                                <div class="product">
+                                    {% if order.items %}
+                                        <img src="{{ order.items[0].pic }}" alt="Product Image" class="productimage">
                                     {% else %}
-                                        <!-- Handle case when order.date_created is None -->
+                                        <!-- Handle case when order has no items -->
                                     {% endif %}
-                                    <div class="product-button">
-                                        <a href="#">View Order Details</a>
+                                    <div class="product-details">
+                                        <h4>Order ID: {{ order.id }}</h4>
+                                        <p>Total Price: ${{ order.total_price }}</p>
+                                        {% if order.date_created %}
+                                            <p>Order Date: {{ order.date_created.strftime('%Y-%m-%d %H:%M:%S') }}</p>
+                                        {% else %}
+                                            <!-- Handle case when order.date_created is None -->
+                                        {% endif %}
+                                        <div class="product-button">
+                                            <a href="#">View Order Details</a>
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
-                        {% endfor %}
-                    </div>
-                {% endfor %}
-            {% else %}
-                <p>No order history available.</p>
-            {% endif %}
+                            {% endfor %}
+                        </div>
+                    {% endfor %}
+                {% else %}
+                    <p>No order history available.</p>
+                {% endif %}
+            </div>
         </div>
-    </div>
 
         <!-- Recommended Products Container -->
-        <div class="container">
+        <div class="recommended-products-container">
             <h2>Recommended Products:</h2>
             <div class="products">
                 {% for product in recommended_products %}
                     <div class="product">
-                        <img src="{{ product.pic }}" alt="Product Image" class="productimage">
+                        <img src="{{ product.pic }}" alt="Product Image" class="product-image">
                         <div class="product-details">
-                            <h3>{{ product.name }}</h3>
+                            <h4>{{ product.name }}</h4>
                             <p>Category: {{ product.category }}</p>
                             <div class="product-button">
                                 <a href="/product/{{ product.Item_ID }}">Show Products</a>
@@ -165,14 +164,14 @@
         </div>
 
         <!-- Wishlist Container -->
-        <div class="container">
+        <div class="wishlist-container">
             <h2>My Wishlist:</h2>
             <div class="products">
                 {% for item in wishlist_products %}
                     <div class="product">
-                        <img src="{{ item.pic }}" alt="Product Image" class="productimage">
+                        <img src="{{ item.pic }}" alt="Product Image" class="product-image">
                         <div class="product-details">
-                            <h3>{{ item.name }}</h3>
+                            <h4>{{ item.name }}</h4>
                             <p>Category: {{ item.category }}</p>
                             <div class="product-button">
                                 <a href="/product/{{ item.Item_ID }}">Show Products</a>

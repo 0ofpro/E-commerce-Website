@@ -5,10 +5,16 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Simple Navbar Website</title>
     <style>
+        @font-face {
+        font-family: Font1;
+        src: url(/static/Butler.otf);
+        }
+        
         body {
             margin: 0;
-            font-family: Arial, sans-serif;
+            font-family: Font1,Arial, sans-serif;
             background-color: #dfe3ee; /* Light pastel color */
+            color: #615f5f;
         }
         .navbar {
             display: flex;
@@ -157,24 +163,39 @@
         .signup-form input[type="submit"]:hover {
             background-color:  #9696b8; /* Original color */
         }
+
+        @font-face {
+        font-family: myFont;
+        src: url(/static/Flicker.otf);
+        }
+        
+        .website-name {
+            font-family: myFont;
+            font-size: 55px;
+        }
     </style>
 </head>
 <body>
     <div class="navbar">
-        <div class="website-name">SHOP-NONSTOP!</div>
-
-        <a href="/show_products">All Products</a>
-
-        <div class="search-bar">
-            <input type="text" placeholder="🔍 Search...">
-        </div>
         <div class="icons">
+            <a href="/" class="website-name">SHOP-NONSTOP!</a>
+        </div>
+
+        <div class="icons">
+            <a href="/show_products">All Products</a>
             <div class="dropdown">
-                <a href="#">👤Account</a>
+                <a href="dashboard">👤Account</a>
                 <div class="dropdown-content">
                     <a href="/signup"> Create Account</a>
                     <a href="/login">🔐 Login</a>
                     <a href="/login">➡️ Logout</a>
+                </div>
+            </div>
+            <div class="dropdown">
+                <a href="/"> 🛍️ Orders</a>
+                <div class="dropdown-content">
+                    <a href="/track_order"> Track order</a>
+                    <a href="/dashboard"> Order History</a>
                 </div>
             </div>
             <a href="/cart">🛒 Cart</a>

@@ -124,9 +124,15 @@
     <div class="total-price-container">
         <h3>Total Price: ${{ total_price }}</h3>
     </div>
+    {% if cart_products %}
     <div class="total-price-container">
         <a href="{{ url_for('checkout') }}" class="deep-purple-btn">Proceed to Checkout</a>
     </div>
+    {% else %}
+    <div class="total-price-container">
+        <p>Cart is empty.</p>
+    </div>
+    {% endif %}
 </div>
 
 {% endblock %}
