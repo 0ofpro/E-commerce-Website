@@ -534,3 +534,17 @@ def track_order():
         return render_template('track_order.html', username=username, order_history=order_history)
     else:
         return redirect(url_for('login'))
+
+
+@app.route('/total_expenses')
+def total_expenses():
+    username = session.get('username')
+    
+    if username:
+        user = User.query.filter_by(username=username).first()
+        total_expenses = db.session.query(db.func.sum(Order.total_price)).filter(Order.user_id == user.id).scalar()
+        total_expenses = total_expenses
+        total_expenses = total_expenses if total_expenses is not None else 0
+        return render_template('total_expenses.html', total_expenses=total_expenses)
+    else:
+        return render_template('login.html')
