@@ -1,5 +1,6 @@
 from app import db
 from datetime import datetime
+from sqlalchemy.orm import relationship
 
 class Items(db.Model):
     __tablename__ = 'item'
@@ -14,8 +15,20 @@ class Items(db.Model):
     itme_sizes = db.Column(db.String(120),  nullable=True)
     color = db.Column(db.String(120), nullable=False)
     pic = db.Column(db.Text) 
+
     def __repr__(self):
         return f"<Products(Item_ID='{self.Item_ID}', name='{self.name}',price ='{self.price},category ='{self.category})>"
+
+class Deals(db.Model):
+    __tablename__ = 'deals'
+    id = db.Column(db.Integer, primary_key=True)
+    item_id = db.Column(db.String(80), db.ForeignKey('item.Item_ID'), nullable=False)
+    deal = db.Column(db.String(255), nullable=False)
+    
+    item = relationship('Items', backref='deals')
+    def __repr__(self):
+        return f"<Deals(id='{self.id}', item_id='{self.item_id}', deal='{self.deal}')>"
+    
 
 class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
