@@ -118,6 +118,7 @@
             justify-content: center;
             align-items: center;
             margin-top: 50px;
+            background-color: #9c9cb1;
         }
         .signup-photo {
             flex: 1;
@@ -130,8 +131,8 @@
         }
         .signup-form {
             flex: 1;
-            background-color: #6e6ea0; /* Original color */
-            padding: 20px;
+            background-color: #9c9cb1; /* Original color */
+            padding: 10px;
             border-radius: 10px;
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
             margin-right: 50px;
@@ -173,6 +174,58 @@
             font-family: myFont;
             font-size: 55px;
         }
+
+
+        .budget-form {
+            display: none;
+            position: absolute;
+            background-color: #fff; /* Background color */
+            border: 1px solid #ccc; /* Border color */
+            border-radius: 5px; /* Rounded corners */
+            padding: 10px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Box shadow */
+        }
+        .budget-form label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        .budget-form input[type="number"] {
+            width: 100%;
+            padding: 8px;
+            margin-bottom: 10px;
+            border: 1px solid #ccc; /* Border color */
+            border-radius: 3px; /* Rounded corners */
+            box-sizing: border-box;
+            font-size: 16px;
+        }
+        .budget-form input[type="submit"] {
+            width: 100%;
+            padding: 10px;
+            background-color: #6e6ea0; /* Button background color */
+            color: #fff; /* Button text color */
+            border: none;
+            border-radius: 3px; /* Rounded corners */
+            cursor: pointer;
+            font-size: 16px;
+        }
+        .budget-form input[type="submit"]:hover {
+            background-color: #555; /* Button background color on hover */
+        }
+
+        .all-products-button {
+            padding: 10px 20px; /* Padding */
+            background-color: #5656a8; /* Background color */
+            color: white; /* Text color */
+            border: none; /* Border */
+            border-radius: 5px; /* Rounded corners */
+            text-decoration: none; /* Remove underline */
+            cursor: pointer; /* Cursor style */
+            transition: background-color 0.3s ease; /* Smooth transition */
+        }
+        .all-products-button:hover {
+            background-color: #2b2b58; /* Darker background color on hover */
+        }
     </style>
 </head>
 <body>
@@ -180,15 +233,16 @@
         <div class="icons">
             <a href="/" class="website-name">SHOP-NONSTOP!</a>
         </div>
-
+    
         <div class="icons">
-            <a href="/show_products">All Products</a>
+            <a href="/show_products" class="all-products-button">All Products</a>
+            <!-- Dropdown menu for account and orders -->
             <div class="dropdown">
                 <a href="dashboard">👤Account</a>
                 <div class="dropdown-content">
                     <a href="/signup"> Create Account</a>
                     <a href="/login">🔐 Login</a>
-                    <a href="/login">➡️ Logout</a>
+                    <a href="/logout">➡️ Logout</a>
                 </div>
             </div>
             <div class="dropdown">
@@ -198,17 +252,41 @@
                     <a href="/order_history"> Order History</a>
                 </div>
             </div>
+            <!-- Link to cart page -->
             <a href="/cart">🛒 Cart</a>
+            <!-- Budget section with hover effect -->
+            <div class="dropdown">
+                <span class="budget-button">💰 Budget: ${{ session.get('budget', '0.00') }}</span>
+                <div class="dropdown-content budget-form">
+                    <form action="/set_budget" method="POST">
+                        <label for="budget">Set Budget:</label>
+                        <input type="number" id="budget" name="budget" step="0.01">
+                        <input type="submit" value="Set">
+                    </form>
+                </div>
+            </div>
         </div>
     </div>
 
-    <!-- Main content of your website goes here -->
+    <!-- Main content -->
     <div class="content">
         {% block content %}
-        <div class="page">
-
-        </div>
+        <!-- Your page content goes here -->
         {% endblock %}
     </div>
+
+    <!-- JavaScript to handle hover event -->
+    <script>
+        const budgetButton = document.querySelector('.budget-button');
+        const budgetForm = document.querySelector('.budget-form');
+
+        budgetButton.addEventListener('mouseenter', () => {
+            budgetForm.style.display = 'block';
+        });
+
+        budgetForm.addEventListener('mouseleave', () => {
+            budgetForm.style.display = 'none';
+        });
+    </script>
 </body>
 </html>

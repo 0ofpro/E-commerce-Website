@@ -126,6 +126,16 @@
                 <button type="submit" class="rating-review-btn">Add to Cart</button>
             </form>
         </li>
+        {% with messages = get_flashed_messages() %}
+        {% if messages %}
+            <ul class="flashes">
+                {% for message in messages %}
+                    <li style="color: red;">{{ message }}</li>
+                {% endfor %}
+            </ul>
+        {% endif %}
+        {% endwith %}
+    
     </ul>
     <div class="ratings-reviews">
         <h2>Ratings and Reviews</h2>
@@ -140,5 +150,6 @@
             <p>No ratings and reviews yet.</p>
         {% endif %}
     </div>
+
 </div>
 {% endblock %}

@@ -25,7 +25,7 @@
 
     /* Set fixed width and height for images */
     .slide img {
-        width: 50%; /* Adjust the width as needed */
+        width: 60%; /* Adjust the width as needed */
         height: 300px; /* Adjust the height as needed */
         object-fit: cover; /* Maintain aspect ratio */
         float: left; /* Float left for image */
@@ -34,14 +34,14 @@
     /* Position the deal information on the right of each product */
     .product-details {
         position: absolute;
-        top: 0;
-        left: 50%; /* Positioned relative to the slideshow container */
-        width: 50%; /* Take 50% width of the container */
-        height: 100%;
+        top: 50%;
+        right: 0;
+        transform: translateY(-50%);
+        width: 30%; /* Take 50% width of the container */
+        height: auto; /* Auto height */
         padding: 20px;
         box-sizing: border-box; /* Include padding and border in the element's total width and height */
     }
-
     /* Fade animation for the slides */
     .fade {
         animation: fade 5s infinite;
