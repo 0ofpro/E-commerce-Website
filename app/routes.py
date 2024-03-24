@@ -148,8 +148,14 @@ def login():
             flash('Invalid username or password', 'error')
     return render_template('login.html')
 
-
-
+@app.route('/set_budget', methods=['GET', 'POST'])
+def set_budget():
+    if request.method == 'POST':
+        budget = round(float(request.form['budget']), 2)
+        session['budget'] = budget
+        flash('Budget set successfully', 'success')
+        return redirect(url_for('index'))  # Redirect to the homepage or any other page after setting the budget
+    return render_template('set_budget.html')
 
 # @app.route('/dashboard')
 # def dashboard():
@@ -237,7 +243,7 @@ def order_history():
         order_history = Order.query.filter_by(user_id=user.id).all()
 
         # Group order history by date if necessary
-        grouped_order_history = group_orders_by_date(order_history)
+        grouped_order_history = group_orders_by_time(order_history)
 
         return render_template('order_history.html', username=username, grouped_order_history=grouped_order_history)
     else:
@@ -252,6 +258,17 @@ def group_orders_by_date(order_history):
     grouped_orders = {key: list(group) for key, group in groupby(sorted_orders, key=lambda x: x.date_created.date())}
 
     return grouped_orders
+
+
+def group_orders_by_time(order_history):
+    # Sort orders by date_created
+    sorted_orders = sorted(order_history, key=lambda x: x.date_created)
+
+    # Group orders by time_created
+    grouped_orders = {key: list(group) for key, group in groupby(sorted_orders, key=lambda x: x.date_created.time())}
+
+    return grouped_orders
+
 
 @app.route('/add_to_wishlist', methods=['POST'])
 def add_to_wishlist():
@@ -277,7 +294,6 @@ def add_to_wishlist():
             wishlist_item = Wishlist(user_id=user_id, item_id=item_id)
             db.session.add(wishlist_item)
             db.session.commit()
-            flash('Item added to wishlist successfully', 'success')
 
         return redirect(url_for('dashboard'))
 
@@ -325,26 +341,37 @@ def add_to_cart():
     if request.method == 'POST':
         username = session.get('username')
         user = User.query.filter_by(username=username).first()
-        user_id = user.id # Corrected line
-
+        user_id = user.id
+        
         # Check if the user is logged in
         if not user_id:
             flash('Please log in to add items to your cart.', 'error')
             return redirect(url_for('login'))
 
-        # Get item ID from the form
+        # Get item ID and price from the form
         item_id = request.form.get('item_id')
+        item = Items.query.filter_by(Item_ID=item_id).first()
+        price = item.price
+        # Retrieve budget from session
+        budget = session.get('budget', 0.0)
 
-        # Check if the item is already in the user's wishlist
+        # Check if adding the item exceeds the budget
+        if budget - price < 0:
+            flash('Adding this item exceeds your budget!', 'error')
+            return redirect(url_for('product_page', Item_ID=item_id))
+
+        # Subtract the price of the item from the budget
+        session['budget'] -= price
+
+        # Check if the item is already in the user's cart
         existing_cart_item = Cart.query.filter_by(user_id=user_id, item_id=item_id).first()
         if existing_cart_item:
             flash('Item is already in your cart', 'error')
         else:
-            # Add the item to the user's wishlist
+            # Add the item to the user's cart
             cart_item = Cart(user_id=user_id, item_id=item_id)
             db.session.add(cart_item)
             db.session.commit()
-            flash('Item added to cart successfully', 'success')
 
         return redirect(url_for('product_page', Item_ID=item_id))
 
@@ -383,10 +410,17 @@ def remove_from_cart(item_id):
             if user:
                 user_id = user.id
 
-                # Check if the item exists in the user's wishlist
+                # Check if the item exists in the user's cart
                 cart_item = Cart.query.filter_by(user_id=user_id, item_id=item_id).first()
                 if cart_item:
-                    # Remove the item from the wishlist
+                    # Retrieve the price of the item
+                    item = Items.query.filter_by(Item_ID=item_id).first()
+                    price = item.price
+
+                    # Add the price of the item back to the budget
+                    session['budget'] += price
+
+                    # Remove the item from the cart
                     db.session.delete(cart_item)
                     db.session.commit()
                     flash('Item removed from cart successfully', 'success')
@@ -414,7 +448,7 @@ def checkout():
         address = request.form['address']
         # Assuming cart_items and total_price calculation happens before this point
         cart_items = Cart.query.filter_by(user_id=user.id).all()
-        total_price = sum(item.price for item in cart_items)  # You'll need to adjust based on your actual model
+        total_price = round(sum(item.price for item in cart_items),2)  # You'll need to adjust based on your actual model
 
         # Create and save the order
         order = Order(user_id=user.id, phone=phone, address=address, total_price=total_price)
@@ -446,7 +480,7 @@ def place_order():
 
     # Calculate total_price from cart items
     cart_items = Cart.query.filter_by(user_id=user_id).all()
-    total_price = sum(item.item.price for item in cart_items)  # Make sure this line matches your models
+    total_price = round(sum(item.item.price for item in cart_items),2)  # Make sure this line matches your models
 
     # Correctly passing user_id to the Order constructor
     order = Order(user_id=user_id, phone=phone, address=address, total_price=total_price)

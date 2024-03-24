@@ -92,7 +92,7 @@
                 {% if grouped_order_history %}
                     {% for order_date, orders in grouped_order_history.items() %}
                         <div class="order-group">
-                            <h3>Order {{ loop.index }} : {{ order_date }}</h3>
+                            <h3>Order {{ loop.index }} </h3>
                             {% for order in orders %}
                                 <div class="product">
                                     {% if order.items %}
@@ -102,7 +102,7 @@
                                     {% endif %}
                                     <div class="product-details">
                                         
-                                        <p>Total Price: ${{ order.total_price }}</p>
+                                        <p>Total Price: ${{ order.total_price | round(2) }}</p>
                                         {% if order.date_created %}
                                             <p>Order Date: {{ order.date_created.strftime('%Y-%m-%d %H:%M:%S') }}</p>
                                         {% else %}

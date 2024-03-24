@@ -83,7 +83,7 @@
                 <div class="order">
                     <h3>Order ID: {{ order.id }}</h3>
                     <p>Status: {{ order.tracking_level }}</p>
-                    <p>Total Price: ${{ order.total_price }}</p>
+                    <p>Total Price: ${{ order.total_price | round(2) }}</p>
                     {% if order.date_created %}
                         <p>Order Date: {{ order.date_created.strftime('%Y-%m-%d %H:%M:%S') }}</p>
                     {% else %}
