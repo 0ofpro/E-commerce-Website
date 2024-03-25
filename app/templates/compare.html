@@ -1,8 +1,11 @@
 
+{% extends 'base.html' %}
 
+{% block content %}
 
 <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-<div class="container">
+
+    <div class="container">
     <h1 class="mt-4">Compare Items</h1>
     <form action="/compare" method="POST">
         <div class="row">
@@ -29,6 +32,16 @@
     <!-- Display compared items here -->
     {% if compared_items %}
         <h2 class="mt-4 text-center">Comparison Results</h2>
+        <div class="row mt-4">
+            <div class="col-md-6 text-center">
+
+                <img src="{{ item1_pic }}" alt="Item 1 Image">
+            </div>
+            <div class="col-md-6 text-center">
+                
+                <img src="{{ item2_pic }}" alt="Item 2 Image">
+            </div>
+        </div>
         <div class="table-responsive">
             <table class="table table-bordered mx-auto">
                 <thead>
@@ -40,11 +53,7 @@
                 </thead>
                 <tbody>
 
-                    <tr>
-                        <td>Image</td>
-                        <td><img src="{{ item1_pic }}" alt="Item 1 Image" style="max-width: 100px;"></td>
-                        <td><img src="{{ item2_pic }}" alt="Item 2 Image" style="max-width: 100px;"></td>
-                    </tr>
+
 
 
 
@@ -98,9 +107,12 @@
             </table>
         </div>
     {% endif %}
-</div>
+    </div>
 
 <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 
+
+
+{% endblock %}
