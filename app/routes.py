@@ -534,3 +534,29 @@ def track_order():
         return render_template('track_order.html', username=username, order_history=order_history)
     else:
         return redirect(url_for('login'))
+# Route to render the compare page
+@app.route('/compare', methods=['GET', 'POST'])
+def compare_items():
+    if request.method == 'POST':
+        # Retrieve selected items' IDs from the form
+        item1_id = request.form.get('item1')
+        item2_id = request.form.get('item2')
+
+        # Query the database to retrieve item details
+        item1 = Items.query.filter_by(Item_ID=item1_id).first()
+        item2 = Items.query.filter_by(Item_ID=item2_id).first()
+
+        # Check if both items are found
+        if item1 and item2:
+            # Pass compared items to the template along with image URLs
+            item1_pic = item1.pic if item1.pic else None
+            item2_pic = item2.pic if item2.pic else None
+            return render_template('compare.html', compared_items={'item1': item1, 'item1_pic': item1_pic, 'item2': item2, 'item2_pic': item2_pic})
+        else:
+            flash('One or both items not found', 'error')
+            return redirect(url_for('compare_items'))
+
+    # If it's a GET request, render the compare page with item options
+    items = Items.query.all()
+    return render_template('compare.html', items=items)
+
