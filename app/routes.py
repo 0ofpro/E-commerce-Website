@@ -5,7 +5,7 @@ from sqlalchemy.sql import text,or_
 from math import ceil
 from datetime import datetime
 from itertools import groupby
-
+from datetime import datetime, timedelta
 
 @app.route('/')
 def index():
@@ -608,3 +608,69 @@ def update_order_status(order_id):
     else:
         flash('Order not found', 'error')
     return redirect(url_for('admin_dashboard'))
+
+@app.route('/total_expenses')
+def total_expenses():
+    username = session.get('username')
+    
+    if username:
+        user = User.query.filter_by(username=username).first()
+        total_expenses = db.session.query(db.func.sum(Order.total_price)).filter(Order.user_id == user.id).scalar()
+        total_expenses = total_expenses if total_expenses is not None else 0
+
+        # Calculate monthly expenses
+        first_day_of_month = datetime.today().replace(day=1)
+        monthly_expenses = db.session.query(db.func.sum(Order.total_price)).filter(Order.user_id == user.id, Order.date_created >= first_day_of_month).scalar()
+        monthly_expenses = monthly_expenses if monthly_expenses is not None else 0
+
+        # Calculate yearly expenses
+        first_day_of_year = datetime.today().replace(month=1, day=1)
+        yearly_expenses = db.session.query(db.func.sum(Order.total_price)).filter(Order.user_id == user.id, Order.date_created >= first_day_of_year).scalar()
+        yearly_expenses = yearly_expenses if yearly_expenses is not None else 0
+
+        # Fetch order items for the current month
+        monthly_orders = Order.query.filter(Order.user_id == user.id, Order.date_created >= first_day_of_month).all()
+
+        # Transform orders to only include necessary item details
+        monthly_order_items = [
+            {
+                'name': item.name,
+                'date': order.date_created.strftime('%Y-%m-%d'),
+                'price': item.price
+            }
+            for order in monthly_orders
+            for item in order.items
+        ]
+
+        return render_template('total_expenses.html', username=username,total_expenses=total_expenses, monthly_expenses=monthly_expenses, yearly_expenses=yearly_expenses, monthly_order_items=monthly_order_items)
+    else:
+        return render_template('login.html')
+    
+
+
+
+@app.route('/total_expenses/view')
+def view_expenses():
+    username = session.get('username')
+    if not username:
+        return redirect(url_for('login'))
+
+    year = request.args.get('year', default=datetime.now().year, type=int)
+    # Changed to get list of months to allow multiple months selection or no selection
+    month = request.args.getlist('month', type=int)  
+
+    user = User.query.filter_by(username=username).first()
+    if not user:
+        return redirect(url_for('login'))
+
+    start_date = datetime(year, 1, 1)
+    end_date = datetime(year + 1, 1, 1)
+
+    if month:
+        orders = [Order.query.filter(Order.user_id == user.id, Order.date_created >= datetime(year, m, 1),
+                                     Order.date_created < datetime(year, m + 1, 1) if m < 12 else datetime(year + 1, 1, 1)).all() for m in month]
+        orders = [item for sublist in orders for item in sublist]  # Flatten the list
+    else:
+        orders = Order.query.filter(Order.user_id == user.id, Order.date_created >= start_date, Order.date_created < end_date).all()
+
+    return render_template('view_expenses.html', username=username, orders=orders, selected_year=year, selected_month=month)
