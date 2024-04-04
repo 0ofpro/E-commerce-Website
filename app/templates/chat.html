@@ -1,24 +1,36 @@
 {% extends 'base.html' %}
 
 {% block content %}
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Chat</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
     <style>
         /* Custom CSS styles */
         body {
             background-color: #f8f9fa; /* Change background color */
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
         }
         #chat-container {
             max-width: 500px;
-            margin: 0 auto;
+            margin: 50px auto;
             padding: 20px;
             border: 1px solid #ccc;
             border-radius: 5px;
             background-color: #fff; /* Change background color */
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        h2 {
+            font-size: 24px;
+            margin-bottom: 20px;
+            text-align: center;
         }
         .message {
             margin-bottom: 10px;
@@ -27,19 +39,33 @@
         }
         .user-message {
             background-color: #f0f0f0;
+            color: #333;
+            text-align: right;
         }
         .chatbot-message {
             background-color: #e0e0e0;
+            color: #333;
+        }
+        .input-group {
+            margin-top: 20px;
+        }
+        #message-input {
+            border-radius: 5px;
+            border: 1px solid #ccc;
+            padding: 10px;
+        }
+        #send-button {
+            border-radius: 5px;
         }
     </style>
 </head>
 <body>
     <div id="chat-container" class="container">
-        <h2>Welcome to our Customer Support Centre <i class="fas fa-comments"></i></h2>
+        <h2 style="max-width: calc(100% - 25px); overflow: hidden; text-overflow: ellipsis;">Welcome to our Customer Support Centre <i class="fas fa-comments"></i></h2>
         <div id="chat-messages">
             <!-- Chat messages will be displayed here -->
         </div>
-        <div class="input-group mb-3">
+        <div class="input-group">
             <input type="text" id="message-input" class="form-control" placeholder="Type your message...">
             <div class="input-group-append">
                 <button id="send-button" class="btn btn-primary">Send</button>

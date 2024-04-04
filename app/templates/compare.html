@@ -2,6 +2,14 @@
 {% extends 'base.html' %}
 
 {% block content %}
+<style>
+    .product-image {
+        width: 200px; /* Adjust the width as needed */
+        height: auto; /* Maintain aspect ratio */
+        display: block;
+        margin: 0 auto; /* Center the image */
+    }
+</style>
 
 <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
 
@@ -36,11 +44,11 @@
         <div class="row mt-4">
             <div class="col-md-6 text-center">
 
-                <img src="{{ item1_pic }}" alt="Item 1 Image">
+                <img src="{{ item1_pic }}" alt="Item 1 Image" class="product-image">
             </div>
             <div class="col-md-6 text-center">
 
-                <img src="{{ item2_pic }}" alt="Item 2 Image">
+                <img src="{{ item2_pic }}" alt="Item 2 Image" class="product-image">
             </div>
         </div>
 
@@ -96,8 +104,8 @@
                     </tr>
                     <tr>
                         <td>Item Sizes</td>
-                        <td>{{ compared_items['item1'].item_sizes }}</td>
-                        <td>{{ compared_items['item2'].item_sizes }}</td>
+                        <td>{{ compared_items['item1'].itme_sizes }}</td>
+                        <td>{{ compared_items['item2'].itme_sizes }}</td>
                     </tr>
                     <tr>
                         <td>Color</td>
