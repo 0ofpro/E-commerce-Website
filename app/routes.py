@@ -674,3 +674,47 @@ def view_expenses():
         orders = Order.query.filter(Order.user_id == user.id, Order.date_created >= start_date, Order.date_created < end_date).all()
 
     return render_template('view_expenses.html', username=username, orders=orders, selected_year=year, selected_month=month)
+
+@app.route('/chat')
+def chat():
+    return render_template('chat.html')
+
+# Route to handle incoming messages
+@app.route('/chat/send_message', methods=['POST'])
+def send_message():
+    # Extract the message from the request
+    message = request.form.get('message')
+
+    # Check if the message contains "what is the price of" followed by an SKU number
+    if "sku" in message.lower():
+        # Extract the SKU number from the message
+        sku = message.split("sku ")[1].strip().upper()  # Convert SKU to uppercase for case-insensitive search
+
+        # Query the database to retrieve the item with the specified SKU number
+        item = Items.query.filter_by(sku=sku).first()
+
+        if item:
+            response = f"The price of '{item.name}' (SKU: {sku}) is ${item.price}."
+        else:
+            response = f"Sorry, I couldn't find any item with the SKU number '{sku}'."
+
+    # Check if the message contains "what is the price of" followed by an item name
+    elif "what is the price of" in message.lower():
+        # Extract the item name from the message
+        item_name = message.lower().replace("what is the price of", "").strip()
+
+        # Query the database to retrieve items with names similar to the provided item name
+        items = Items.query.filter(Items.name.ilike(f"%{item_name}%")).all()
+
+        if items:
+            response = "Prices for items matching '{}' are:\n".format(item_name)
+            for item in items:
+                response += f"{item.name}: ${item.price}\n"
+        else:
+            response = f"Sorry, I couldn't find any item matching '{item_name}'."
+
+    else:
+        response = "I'm sorry, I couldn't understand your request. Please ask for the price of an item."
+
+    # Return the response as JSON
+    return jsonify({'response': response})
