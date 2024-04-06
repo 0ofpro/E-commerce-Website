@@ -1,6 +1,6 @@
 from app import app, db
 from flask import render_template, request, redirect, url_for,flash,session,send_from_directory,abort,jsonify
-from app.models import Items, Order,User,UserPreference, RatingReview,Wishlist,Cart, Deals,Admin
+from app.models import Items, Order,User, user_vouchers, UserPreference, RatingReview, Voucher,Wishlist,Cart, Deals,Admin
 from sqlalchemy.sql import text,or_
 from math import ceil
 from datetime import datetime
@@ -42,6 +42,8 @@ def product_page(Item_ID):
 
 @app.route('/product/<string:Item_ID>/rating_review', methods=['GET', 'POST'])
 def product_rating_review(Item_ID):
+    username = session.get('username')
+    user = User.query.filter_by(username=username).first()
     if request.method == 'POST':
         rating = request.form.get('rating')
         review = request.form.get('review')
@@ -49,12 +51,14 @@ def product_rating_review(Item_ID):
         # Create a new entry for rating and review in the database
         rating_review = RatingReview(item_id=Item_ID, rating=rating, review=review)
         db.session.add(rating_review)
+        user.points+=100
         db.session.commit()
-
         return redirect(url_for('product_page', Item_ID=Item_ID))
         #return 'Rating: {}, Review: {}'.format(rating, review)
+        
 
-    return render_template('rating_review.html', Item_ID=Item_ID)
+
+    return render_template('rating_review.html', Item_ID=Item_ID, points=user.points)
 
 
 @app.route('/search', methods=['GET'])
@@ -446,23 +450,26 @@ def checkout():
     if request.method == 'POST':
         phone = request.form['phone']
         address = request.form['address']
-        # Assuming cart_items and total_price calculation happens before this point
         cart_items = Cart.query.filter_by(user_id=user.id).all()
-        total_price = round(sum(item.price for item in cart_items),2)  # You'll need to adjust based on your actual model
+        total_price = round(sum(item.price for item in cart_items), 2)  # Adjust based on actual model
 
         # Create and save the order
         order = Order(user_id=user.id, phone=phone, address=address, total_price=total_price)
         db.session.add(order)
+
         db.session.commit()
 
         # Assuming redirection to a payment or confirmation page
-        # return redirect(url_for('order_confirmation'))  # Assuming an order_confirmation function exists
+        return redirect(url_for('order_confirmation', order_id=order.id))  # Adjust as needed
 
+    # If method is GET or if there's any other issue (e.g., form not correctly filled), show the checkout page again
     cart_items = Cart.query.filter_by(user_id=user.id).all()
     cart_products = [Items.query.filter_by(Item_ID=item.item_id).first() for item in cart_items]
     total_price = sum(item.price for item in cart_products)
+    vouchers = user.vouchers  # Assuming a direct relationship for simplicity
 
-    return render_template('checkout.html', user=user, cart_products=cart_products, total_price=total_price)
+    return render_template('checkout.html', user=user, cart_products=cart_products, total_price=total_price, points=User.points, vouchers=vouchers)
+
 
 
 @app.route('/place_order', methods=['POST'])
@@ -482,6 +489,35 @@ def place_order():
     cart_items = Cart.query.filter_by(user_id=user_id).all()
     total_price = round(sum(item.item.price for item in cart_items),2)  # Make sure this line matches your models
 
+    # Calculate points awarded (100 points per dollar spent)
+    points_awarded = int(total_price) * 100
+    user.points += points_awarded
+    
+    # Retrieve selected voucher and apply discount if valid
+    voucher_id = request.form.get('voucher_id')
+    voucher_applied = False
+    if voucher_id:
+        voucher = Voucher.query.get(voucher_id)
+        if voucher and voucher in user.vouchers:  # Check if the voucher belongs to the user
+            discount = (total_price * voucher.discount) / 100
+            total_price = round(total_price - discount, 2)
+            voucher_applied = True
+
+            # Remove the user-voucher association
+            db.session.execute(
+                user_vouchers.delete().where(
+                    (user_vouchers.c.user_id == user.id) &
+                    (user_vouchers.c.voucher_id == voucher.id)
+                )
+            )
+            db.session.commit()
+
+            flash(f'Voucher applied! {voucher.discount}% discount has been given. New total is ${total_price}', 'success')
+        else:
+            flash('Invalid or expired voucher.', 'error')
+    else:
+        flash('No voucher applied.', 'info')
+    
     # Correctly passing user_id to the Order constructor
     order = Order(user_id=user_id, phone=phone, address=address, total_price=total_price)
     db.session.add(order)
@@ -718,3 +754,28 @@ def send_message():
 
     # Return the response as JSON
     return jsonify({'response': response})
+
+
+@app.route('/non_stop_points', methods=['GET', 'POST'])
+def non_stop_points():
+    if 'username' not in session:
+        flash('Please login to view this page', 'error')
+        return redirect(url_for('login'))
+
+    user = User.query.filter_by(username=session['username']).first_or_404()
+    vouchers = Voucher.query.all()
+
+    if request.method == 'POST':
+        voucher_id = request.form.get('voucher_id')
+        selected_voucher = Voucher.query.get(voucher_id)
+
+        if user.points >= selected_voucher.points_cost:
+            user.points -= selected_voucher.points_cost
+            # Assuming a relationship between User and Voucher exists
+            user.vouchers.append(selected_voucher)
+            db.session.commit()
+            flash(f'Voucher {selected_voucher.type} redeemed successfully!', 'success')
+        else:
+            flash('Not enough points to redeem this voucher.', 'error')
+
+    return render_template('non_stop_points.html', user=user, vouchers=vouchers)
