@@ -125,13 +125,42 @@
                     </p>
                 </div>
             </div>
+        <!-- Voucher Section -->
+        <div class="card mb-3">
+            <h3 class="card-title">Vouchers</h3>
+            {% if vouchers %}
+            <select class="form-control" name="voucher_id" id="voucherSelect">
+                <option value="" data-discount="0">Select a voucher</option>
+                {% for voucher in vouchers %}
+                <option value="{{ voucher.id }}" data-discount="{{ voucher.discount }}">{{ voucher.type }} - {{ voucher.discount }}% off</option>
+                {% endfor %}
+            </select>
+            {% else %}
+            <p>No vouchers available.</p>
+            {% endif %}
         </div>
 
         <!-- Total Price and Place Order Button Section -->
         <div class="d-flex justify-content-between align-items-center">
-            <h4>Total Price: ${{ total_price }}</h4>
+            <h4>Total Price: $<span id="totalPrice">{{ total_price }}</span></h4>
             <button type="submit" class="btn btn-success">Place Order</button>
         </div>
     </form>
 </div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const originalTotalPrice = {{ total_price }};
+    const voucherSelect = document.getElementById('voucherSelect');
+    const totalPriceDisplay = document.getElementById('totalPrice');
+
+    voucherSelect.addEventListener('change', function() {
+        const selectedOption = voucherSelect.options[voucherSelect.selectedIndex];
+        const discount = parseFloat(selectedOption.getAttribute('data-discount'));
+        const discountedPrice = originalTotalPrice - (originalTotalPrice * discount / 100);
+        totalPriceDisplay.textContent = discountedPrice.toFixed(2);
+    });
+});
+</script>
+
 {% endblock %}
