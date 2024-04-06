@@ -42,6 +42,8 @@ def product_page(Item_ID):
 
 @app.route('/product/<string:Item_ID>/rating_review', methods=['GET', 'POST'])
 def product_rating_review(Item_ID):
+    username = session.get('username')
+    user = User.query.filter_by(username=username).first()
     if request.method == 'POST':
         rating = request.form.get('rating')
         review = request.form.get('review')
@@ -49,12 +51,14 @@ def product_rating_review(Item_ID):
         # Create a new entry for rating and review in the database
         rating_review = RatingReview(item_id=Item_ID, rating=rating, review=review)
         db.session.add(rating_review)
+        user.points+=100
         db.session.commit()
-
         return redirect(url_for('product_page', Item_ID=Item_ID))
         #return 'Rating: {}, Review: {}'.format(rating, review)
+        
 
-    return render_template('rating_review.html', Item_ID=Item_ID)
+
+    return render_template('rating_review.html', Item_ID=Item_ID, points=user.points)
 
 
 @app.route('/search', methods=['GET'])
@@ -434,10 +438,6 @@ def remove_from_cart(item_id):
         return redirect(url_for('cart'))
 
 
-from flask import flash, redirect, render_template, request, session, url_for
-from flask_sqlalchemy import SQLAlchemy
-from datetime import datetime
-
 @app.route('/checkout', methods=['GET', 'POST'])
 def checkout():
     if 'username' not in session:
@@ -457,8 +457,6 @@ def checkout():
         order = Order(user_id=user.id, phone=phone, address=address, total_price=total_price)
         db.session.add(order)
 
-        # Calculate points (each dollar spent gives 100 points
-        # Commit changes to the database
         db.session.commit()
 
         # Assuming redirection to a payment or confirmation page
@@ -472,8 +470,6 @@ def checkout():
 
     return render_template('checkout.html', user=user, cart_products=cart_products, total_price=total_price, points=User.points, vouchers=vouchers)
 
-
-    return render_template('checkout.html', user=user, cart_products=cart_products, total_price=total_price,points=User.points)
 
 
 @app.route('/place_order', methods=['POST'])
