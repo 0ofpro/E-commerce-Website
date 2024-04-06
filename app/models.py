@@ -1,4 +1,4 @@
-from app import db
+from app import app,db
 from datetime import datetime
 from sqlalchemy.orm import relationship
 
@@ -36,6 +36,11 @@ user_vouchers = db.Table('user_vouchers',
     db.Column('redeemed_on', db.DateTime, default=datetime.utcnow)  # Optional: track when the voucher was redeemed
 )
 
+class Friendship(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    friend_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+
 class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(80), unique=True, nullable=False)
@@ -45,6 +50,14 @@ class User(db.Model):
     
     vouchers = db.relationship('Voucher', secondary=user_vouchers,
                                backref=db.backref('users', lazy='dynamic'))
+
+    friends = relationship(
+        'User',
+        secondary='friendship',
+        primaryjoin=id == Friendship.user_id,
+        secondaryjoin=id == Friendship.friend_id,
+        backref='friend_of'
+    )
 
     def __repr__(self):
         return f"<User(username='{self.username}', points='{self.points}')>"

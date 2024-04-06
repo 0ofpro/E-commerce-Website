@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>View Friends</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f9f9f9;
+            margin: 0;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            text-align: center;
+            color: #333;
+        }
+
+        .friend-list {
+            margin-top: 20px;
+        }
+
+        .friend-list ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .friend-list li {
+            margin-bottom: 10px;
+            padding: 10px;
+            background-color: #f0f0f0;
+            border-radius: 5px;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .friend-list li:last-child {
+            margin-bottom: 0;
+        }
+
+        .friend-name {
+            flex-grow: 1;
+        }
+
+        .remove-button {
+            background-color: #ff6347; /* Red color */
+            color: #fff;
+            padding: 5px 10px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .remove-button:hover {
+            background-color: #cc4125; /* Darker red color on hover */
+        }
+
+        .dashboard-button {
+            display: block;
+            margin: 20px auto 0; /* Center the button horizontally and add some space at the top */
+            text-align: center;
+            text-decoration: none;
+            background-color: #7e57c2; /* Purple color */
+            color: #fff;
+            padding: 10px 20px;
+            border-radius: 5px;
+            transition: background-color 0.3s ease;
+        }
+
+        .dashboard-button:hover {
+            background-color: #5d4095; /* Darker purple color on hover */
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>View Friends</h1>
+
+        <div class="friend-list">
+            <h2>Friend List</h2>
+            <ul>
+                {% for friend in friends %}
+                    <li>
+                        <span class="friend-name">{{ friend.username }}</span>
+                        <form action="/remove_friend/{{ friend.id }}" method="POST">
+                            <button class="remove-button" type="submit">Remove</button>
+                        </form>
+                    </li>
+                {% endfor %}
+            </ul>
+        </div>
+
+        <!-- Dashboard button -->
+        <a href="{{ url_for('dashboard', username=session.get('username')) }}" class="dashboard-button">Dashboard</a>
+    </div>
+</body>
+</html>

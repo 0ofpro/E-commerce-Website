@@ -1,6 +1,6 @@
 from app import app, db
 from flask import render_template, request, redirect, url_for,flash,session,send_from_directory,abort,jsonify
-from app.models import Items, Order,User, user_vouchers, UserPreference, RatingReview, Voucher,Wishlist,Cart, Deals,Admin
+from app.models import Items, Order,User, user_vouchers, UserPreference, RatingReview, Voucher,Wishlist,Cart, Deals,Admin,Friendship
 from sqlalchemy.sql import text,or_
 from math import ceil
 from datetime import datetime
@@ -779,3 +779,95 @@ def non_stop_points():
             flash('Not enough points to redeem this voucher.', 'error')
 
     return render_template('non_stop_points.html', user=user, vouchers=vouchers)
+
+@app.route('/add_friend', methods=['GET'])
+def add_friend():
+    current_username = session.get('username')
+    if current_username:
+        search_query = request.args.get('search_query')
+        if search_query:
+            # Fetch users whose username contains the search query
+            current_user = User.query.filter_by(username=current_username).first()
+            added_friend_ids = [friend.id for friend in current_user.friends]
+            users = User.query.filter(User.username.ilike(f'%{search_query}%')).filter(User.username != current_username).filter(~User.id.in_(added_friend_ids)).all()
+        else:
+            # Fetch all users except the current user and already added friends
+            current_user = User.query.filter_by(username=current_username).first()
+            added_friend_ids = [friend.id for friend in current_user.friends]
+            users = User.query.filter(User.username != current_username).filter(~User.id.in_(added_friend_ids)).all()
+        return render_template('add_friend.html', users=users)
+    else:
+        # Redirect the user to the login page if username is not in session
+        return redirect(url_for('login'))
+
+
+
+
+@app.route('/add_friend/<int:friend_id>/add', methods=['POST'])
+def add_friend_to_db(friend_id):
+    current_username = session.get('username')
+    if current_username:
+        friend = User.query.get(friend_id)
+        if friend:
+            # Add the friend to the current user's friend list
+            current_user = User.query.filter_by(username=current_username).first()
+            current_user.friends.append(friend)
+            db.session.commit()
+            flash('Friend added successfully!', 'success')
+
+            # Update the list of users to exclude the newly added friend
+            added_friend_ids = [friend.id for friend in current_user.friends]
+            users = User.query.filter(User.username != current_username).filter(~User.id.in_(added_friend_ids)).all()
+        else:
+            flash('Friend not found!', 'error')
+            # Fetch all users except the current user if no search query provided
+            users = User.query.filter(User.username != current_username).all()
+    else:
+        flash('User not logged in!', 'error')
+        return redirect(url_for('login'))
+
+    return render_template('add_friend.html', users=users)
+
+
+@app.route('/view_friends')
+def view_friends():
+    current_username = session.get('username')
+    if current_username:
+        # Fetch the current user from the database
+        current_user = User.query.filter_by(username=current_username).first()
+        if current_user:
+            # Get the list of added friends for the current user
+            friends = current_user.friends
+            return render_template('view_friends.html', friends=friends)
+        else:
+            flash('User not found!', 'error')
+            return redirect(url_for('login'))
+    else:
+        flash('User not logged in!', 'error')
+        return redirect(url_for('login'))
+
+from flask import redirect, url_for
+
+@app.route('/remove_friend/<int:friend_id>', methods=['POST'])
+def remove_friend(friend_id):
+    current_username = session.get('username')
+    if current_username:
+        # Retrieve the current user
+        current_user = User.query.filter_by(username=current_username).first()
+        if current_user:
+            # Retrieve the friend to be removed
+            friend_to_remove = User.query.get(friend_id)
+            if friend_to_remove:
+                # Remove the friend from the user's friend list
+                current_user.friends.remove(friend_to_remove)
+                db.session.commit()
+                flash('Friend removed successfully!', 'success')
+            else:
+                flash('Friend not found!', 'error')
+        else:
+            flash('User not found!', 'error')
+    else:
+        flash('User not logged in!', 'error')
+    
+    # Redirect back to the page displaying the friend list
+    return redirect(url_for('view_friends'))
