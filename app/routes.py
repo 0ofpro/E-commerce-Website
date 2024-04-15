@@ -578,32 +578,23 @@ def track_order():
 
 @app.route('/compare', methods=['GET', 'POST'])
 def compare_items():
-    if request.method == 'POST':
+    items = Items.query.all()  # Retrieve all items from the database
 
-        # Retrieve selected items' IDs from the form
+    if request.method == 'POST':
         item1_id = request.form.get('item1')
         item2_id = request.form.get('item2')
-
-
-        # Query the database to retrieve item details
         item1 = Items.query.filter_by(Item_ID=item1_id).first()
         item2 = Items.query.filter_by(Item_ID=item2_id).first()
 
-
-
-        # Check if both items are found
         if item1 and item2:
-            # Pass compared items to the template along with image URLs
-            item1_pic = url_for('static', filename=item1.pic) if item1.pic else None
-            item2_pic = url_for('static', filename=item2.pic) if item2.pic else None
-            return render_template('compare.html', compared_items={'item1': item1, 'item1_pic': item1_pic, 'item2': item2, 'item2_pic': item2_pic})
+            item1_pic = item1.pic if item1.pic else None
+            item2_pic = item2.pic if item2.pic else None
+            return render_template('compare.html', compared_items={'item1': item1, 'item2': item2}, item1_pic=item1_pic, item2_pic=item2_pic, items=items)
         else:
             flash('One or both items not found', 'error')
             return redirect(url_for('compare_items'))
 
-    # If it's a GET request, render the compare page with item options
-    items = Items.query.all()
-    return render_template('compare.html', items=items)
+    return render_template('compare.html', items=items) 
 
 
 @app.route('/admin/login', methods=['GET', 'POST'])
@@ -743,11 +734,17 @@ def send_message():
         items = Items.query.filter(Items.name.ilike(f"%{item_name}%")).all()
 
         if items:
-            response = "Prices for items matching '{}' are:\n".format(item_name)
+            response = "Price of {} is:\n".format(item_name)
             for item in items:
                 response += f"{item.name}: ${item.price}\n"
         else:
             response = f"Sorry, I couldn't find any item matching '{item_name}'."
+
+    # Check if the message asks how to contact the admin
+    elif "contact admin" in message.lower() or "how can i contact admin" in message.lower():
+        response = "You can contact our admin via:\n"
+        response += "Phone: +88 0123456789\n"
+        response += "Main Office Address: 123, Dhanmondi, Dhaka"
 
     else:
         response = "I'm sorry, I couldn't understand your request. Please ask for the price of an item."
