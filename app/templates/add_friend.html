@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add Friends</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f9f9f9;
+            margin: 0;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            text-align: center;
+            color: #333;
+        }
+
+        .search-form {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .search-input {
+            padding: 8px;
+            width: 60%;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            margin-right: 10px;
+        }
+
+        .search-button {
+            padding: 8px 16px;
+            background-color: #008CBA;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .search-button:hover {
+            background-color: #005F6B;
+        }
+
+        .search-results {
+            margin-top: 20px;
+        }
+
+        .search-results h2 {
+            margin-bottom: 10px;
+        }
+
+        .search-results ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .search-results li {
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between; /* Align items to the right */
+        }
+
+        .add-button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 8px 16px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .add-button:hover {
+            background-color: #45a049;
+        }
+
+        .back-button {
+            display: block;
+            margin-top: 20px;
+            text-align: center;
+            text-decoration: none;
+            background-color: #7e57c2; /* Purple color */
+            color: #fff;
+            padding: 10px 20px;
+            border-radius: 5px;
+            transition: background-color 0.3s ease;
+        }
+
+        .back-button:hover {
+            background-color: #5d4095; /* Darker purple color on hover */
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Add Friends</h1>
+        
+        <!-- Search form -->
+        <form class="search-form" action="/add_friend" method="GET">
+            <input class="search-input" type="text" name="search_query" placeholder="Enter username...">
+            <button class="search-button" type="submit">Search</button>
+        </form>
+        <!-- Button to go back to dashboard -->
+        <a href="{{ url_for('dashboard', username=session.get('username')) }}" class="back-button">Dashboard</a>
+        
+        <!-- Display search results -->
+        <div class="search-results">
+            {% if users %}
+                <h2>Search Results</h2>
+                <ul>
+                    {% for user in users %}
+                        <li>
+                            <div>{{ user.username }}</div>
+                            <form action="/add_friend/{{ user.id }}/add" method="POST">
+                                <button class="add-button" type="submit">Add Friend</button>
+                            </form>
+                        </li>
+                    {% endfor %}
+                </ul>
+            {% else %}
+                <p>No users found.</p>
+            {% endif %}
+        </div>
+
+        
+        
+
+    </div>
+</body>
+</html>

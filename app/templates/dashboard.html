@@ -94,14 +94,38 @@
         max-width: 100%;
         height: auto;
     }
+
+    /* Additional styles for friend buttons */
+    .friend-buttons {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 20px;
+    }
+
+    .friend-buttons .friend-btn {
+        padding: 6px 12px;
+        background-color: #007bff;
+        color: #fff;
+        text-decoration: none;
+        border-radius: 5px;
+        transition: background-color 0.3s ease;
+    }
+
+    .friend-buttons .friend-btn:hover {
+        background-color: #0056b3;
+    }
 </style>
 
 <div class="content">
     <div class="welcome-message">
         <h1>Welcome, {{ username }}!</h1>
 
-        <!-- Order History Container -->
-
+        <!-- Friend buttons -->
+        <div class="friend-buttons">
+            <a href="/view_friends" class="friend-btn">View Friends</a>
+            <a href="/add_friend" class="friend-btn">Add Friend</a>
+        </div>
+        
         <!-- Recommended Products Container -->
         <div class="recommended-products-container">
             <h2>Recommended Products:</h2>
