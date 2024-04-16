@@ -12,12 +12,13 @@
     }
     .order-history-container {
         background-color: #d4e0e6; /* Light Blue */
+        overflow-x: auto; /* Enable horizontal scrolling */
+        white-space: nowrap; /* Prevent line breaks */
     }
     .products {
-        display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); /* Adjusted width */
+        display: flex; /* Use flexbox for horizontal layout */
         gap: 20px;
-        margin-top: 20px;
+        padding: 10px;
     }
 
     .product {
@@ -26,6 +27,7 @@
         box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
         overflow: hidden;
         transition: transform 0.3s ease;
+        width: 200px; /* Set a fixed width for each product */
     }
 
     .product:hover {
@@ -87,12 +89,12 @@
 
         <!-- Order History Container -->
         <div class="order-history-container">
-            <h2>Order History 🧾</h2>
+            <br><h2>Order History 🧾</h2>
             <div class="products">
                 {% if grouped_order_history %}
                     {% for order_date, orders in grouped_order_history.items() %}
                         <div class="order-group">
-                            <h3>Order {{ loop.index }} </h3>
+                            <h5>Order {{ loop.index }} </h5>
                             {% for order in orders %}
                                 <div class="product">
                                     {% if order.items %}
@@ -108,9 +110,8 @@
                                         {% else %}
                                             <!-- Handle case when order.date_created is None -->
                                         {% endif %}
-                                        <div class="product-button">
-                                            <a href="#">View Order Details</a>
-                                        </div>
+                                        <a href="#" class="all-products-button">More info</a>
+                                        
                                     </div>
                                 </div>
                             {% endfor %}
