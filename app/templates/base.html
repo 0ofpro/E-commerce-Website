@@ -15,14 +15,14 @@
         body {
             margin: 0;
             font-family: Font1,Arial, sans-serif;
-            background-color: #dfe3ee; /* Light pastel color */
+            background-color: #dfe3ee;/* Light pastel color */
             color: #615f5f;
         }
         .navbar {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            background-color: #6e6ea0;
+            background-color: #9ea3ca;
             color: white;
             padding: 10px;
             height: 85px;
@@ -43,12 +43,17 @@
         .dropdown-content {
             display: none;
             position: absolute;
-            background-color: #333;
+            background-color: #ffffff;
             box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
             z-index: 1;
+            width: 150px;
+            border-radius: 3px;
+            
         }
         .dropdown-content a {
             display: block;
+            text-decoration: none;
+            color:#6666ad;
         }
         .search-bar input[type="text"] {
             padding: 7px;
@@ -61,10 +66,12 @@
         .icons {
             display: flex;
             align-items: center;
+            text-decoration: none;
         }
         .icons a {
             margin-right: 20px;
             position: relative;
+            text-decoration: none;
         }
         .order-tracker-button {
             background-color: #000; /* Black color */
@@ -204,7 +211,7 @@
         .budget-form input[type="submit"] {
             width: 100%;
             padding: 10px;
-            background-color: #6e6ea0; /* Button background color */
+            background-color: #707ab0; /* Button background color */
             color: #fff; /* Button text color */
             border: none;
             border-radius: 3px; /* Rounded corners */
@@ -212,12 +219,12 @@
             font-size: 16px;
         }
         .budget-form input[type="submit"]:hover {
-            background-color: #555; /* Button background color on hover */
+            background-color: #484879; /* Button background color on hover */
         }
 
         .all-products-button {
             padding: 10px 20px; /* Padding */
-            background-color: #5656a8; /* Background color */
+            background-color: #707ab0; /* Background color */
             color: white; /* Text color */
             border: none; /* Border */
             border-radius: 5px; /* Rounded corners */
@@ -226,12 +233,9 @@
             transition: background-color 0.3s ease; /* Smooth transition */
         }
         .all-products-button:hover {
-            background-color: #2b2b58; /* Darker background color on hover */
+            background-color: #484879; /* Darker background color on hover */
 
 
-        }
-        .custom-footer {
-            background-color: #bdb8c1; /* Light grey nearly purple color */
         }
     </style>
 
@@ -255,9 +259,9 @@
                 <div class="dropdown-content">
                     <a href="/signup">Create Account</a>
                     <a href="/login">🔐 Login</a>
+                    <a href="/total_expenses">🪙 Expenses </a>
+                    <a href="/non_stop_points">🏆 point info!</a> <!-- Added Link -->
                     <a href="/logout">➡️ Logout</a>
-                    <a href="/total_expenses">Total Expenses</a>
-                    <a href="/non_stop_points">NON-STOP POINTS!</a> <!-- Added Link -->
                 </div>
             </div>
             <div class="dropdown">
@@ -290,10 +294,6 @@
         {% endblock %}
     </div>
 
-    <!-- Chat icon -->
-    <a href="/chat" id="chat-icon">
-    <img src="/static/chat-icon.png" alt="Chat" width="50" height="50">
-    </a>
     <!-- JavaScript to handle hover event -->
     <script>
         const budgetButton = document.querySelector('.budget-button');
@@ -306,18 +306,6 @@
         budgetForm.addEventListener('mouseleave', () => {
             budgetForm.style.display = 'none';
         });
-    </script>
-
-    <!-- Footer section -->
-    <footer class="text-center py-4 custom-footer">
-        <a class="all-products-button" onclick="redirectToGoogleForm()">Complaint Box</a>
-    </footer>
-
-    <script>
-    function redirectToGoogleForm() {
-        // Redirect to the Google Form URL
-        window.location.href = "https://forms.gle/wGrvQbqYa5UigwAT7"; // Replace with your Google Form URL
-    }
     </script>
 
 

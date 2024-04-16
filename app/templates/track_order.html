@@ -10,7 +10,7 @@
     }
 
     .container {
-        width: 90%; /* Adjusted width */
+        width: 90%;
         margin: auto;
         overflow: hidden;
     }
@@ -28,20 +28,23 @@
     }
 
     .order {
-        width: calc(30% - 20px); /* Adjusted width */
-        background-color: #e8dfdf;
-        border: 1px solid  #e8dfdf;
-        border-radius: 5px;
+        width: calc(25% - 8px);
+        background-color: #f0ebeb;
+        border: 1px solid #ddd;
+        border-radius: 10px;
         margin: 10px;
         padding: 15px;
-        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-        box-sizing: border-box;
-        overflow: hidden; /* Ensure content does not overflow */
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        transition: transform 0.3s ease;
+    }
+
+    .order:hover {
+        transform: translateY(-5px);
     }
 
     .order h3 {
         color: #333;
-        margin-bottom: 10px; /* Added margin */
+        margin-bottom: 10px;
     }
 
     .order p {
@@ -53,30 +56,30 @@
         width: 100%;
         height: auto;
         margin-bottom: 10px;
-        border-radius: 5px; /* Added border radius */
+        border-radius: 5px;
     }
 
     .order-details {
-        text-align: center; /* Center align */
+        text-align: center;
     }
 
     .order-details a {
         display: inline-block;
-        padding: 5px 10px;
-        background-color: #3498db;
+        padding: 8px 16px;
+        background-color: #707ab0;
         color: #fff;
         text-decoration: none;
-        border-radius: 3px;
+        border-radius: 20px;
         transition: background-color 0.3s;
     }
 
     .order-details a:hover {
-        background-color: #2980b9;
+        background-color: #484879;
     }
 </style>
 
 <div class="container">
-    <h2>Track Your Orders 🚚</h2>
+    <br><h2 text-align:centre> Track Your Orders 🚚</h2>
     <div class="orders">
         {% if order_history %}
             {% for order in order_history %}
@@ -97,7 +100,7 @@
                     {% endif %}
 
                     <div class="order-details">
-                        <a href="dashboard">View Order Details</a>
+                        <a href="/order_history">View Order Details</a>
                     </div>
                 </div>
             {% endfor %}

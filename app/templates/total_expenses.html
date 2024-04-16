@@ -4,7 +4,7 @@
 <style>
     .view-all-btn {
         padding: 5px 10px;
-        background-color: #007bff;
+        background-color: #8ba3bd;
         color: white;
         text-decoration: none;
         border-radius: 5px;
@@ -26,11 +26,19 @@
         background-color: #f2f2f2;
     }
     
+    .container {
+        margin: 0 auto;
+        max-width: 800px;
+        padding: 20px;
+        background-color: #ffffff;
+        text-align: center;
+    }
 </style>
-<div class="page">
-    <h1 style="text-align: center;">{{ username }}'s Expense Tracker</h1>
-    <h2>Total Expenses: ${{ total_expenses }}</h2>
-    <h3>Items Purchased This Month:</h3>
+
+<br><h1 style="text-align: center;">{{ username }}'s Expense Tracker 💵</h1><br>
+<div class="container">
+    <h4>Total Expenses: ${{ '{:.2f}'.format(total_expenses) }}</h4><br>
+    <h4>Items Purchased This Month:</h4>
     <table>
         <thead>
             <tr>
@@ -44,7 +52,7 @@
                 <tr>
                     <td>{{ item.name }}</td>
                     <td>{{ item.date }}</td>
-                    <td>${{ item.price }}</td>
+                    <td>${{ '{:.2f}'.format(item.price) }}</td>
                 </tr>
             {% else %}
                 <tr>
@@ -52,18 +60,16 @@
                 </tr>
             {% endfor %}
         </tbody>
-    </table>
+    </table><br>
     <div>
-        <h3>Monthly Expenses: ${{ monthly_expenses }}
-            
-        </h3>
+        <h5>Monthly Expenses: ${{ '{:.2f}'.format(monthly_expenses) }}</h5>
     </div>
     <div>
-        <h3>Yearly Expenses: ${{ yearly_expenses }}
-        </h3>
-    <div>
-        <h3><a href="/total_expenses/view" class="view-all-btn">View All</a></h3>
-    </div>
+        <h5>Yearly Expenses: ${{ '{:.2f}'.format(yearly_expenses) }}</h5>
+        <div>
+            <h3><a href="/total_expenses/view" class="view-all-btn">View All</a></h3>
+        </div>
     </div>
 </div>
+
 {% endblock %}
