@@ -72,6 +72,34 @@
         .dashboard-button:hover {
             background-color: #005F6B; /* Darker purple color on hover */
         }
+        /* Gift points form and button styling */
+        .gift-form {
+            display: flex;
+            align-items: center;
+        }
+
+        .gift-form select {
+            padding: 8px;
+            margin-right: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            background-color: #fff;
+        }
+
+        .gift-form button {
+            background-color: #a1a8cd;
+            color: white;
+            padding: 5px 10px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .gift-form button:hover {
+            background-color: #846c94;
+        }
+        
     </style>
 </head>
 <body>
@@ -82,10 +110,23 @@
                 {% for friend in friends %}
                     <li>
                         <span class="friend-name">{{ friend.username }}</span>
+
+                        <form class="gift-form" action="{{ url_for('gift_points_to_friend', friend_id=friend.id) }}" method="POST">
+                            <select name="points" id="points">
+                                <option value="100">100 points</option>
+                                <option value="500">500 points</option>
+                                <option value="1000">1000 points</option>
+                                <option value="1500">1500 points</option>
+                                <option value="2000">2000 points</option>
+                            </select>
+                            <button class="gift-button" type="submit">Gift Points</button>
+                        </form>
+
                         <form action="/remove_friend/{{ friend.id }}" method="POST">
                             <button class="remove-button" type="submit">Remove</button>
                         </form>
                     </li>
+
                 {% endfor %}
             </ul>
         </div>

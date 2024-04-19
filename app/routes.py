@@ -1,6 +1,6 @@
 from app import app, db
 from flask import render_template, request, redirect, url_for,flash,session,send_from_directory,abort,jsonify
-from app.models import Items, Order,User, user_vouchers, UserPreference, RatingReview, Voucher,Wishlist,Cart, Deals,Admin,Friendship
+from app.models import Items, Order,User, user_vouchers, UserPreference, RatingReview, Voucher,Wishlist,Cart, Deals,Admin,Friendship, Notification
 from sqlalchemy.sql import text,or_
 from math import ceil
 from datetime import datetime
@@ -161,38 +161,7 @@ def set_budget():
         return redirect(url_for('index'))  # Redirect to the homepage or any other page after setting the budget
     return render_template('set_budget.html')
 
-# @app.route('/dashboard')
-# def dashboard():
-#     # Retrieve username from session
-#     username = session.get('username')
-#
-#     if username:
-#         # Fetch user preferences
-#         user = User.query.filter_by(username=username).first()
-#         preferences = UserPreference.query.filter_by(user_id=user.id).all()
-#
-#         # Extract categories from user preferences
-#         categories = [preference.category for preference in preferences]
-#
-#         # Fetch recommended products based on user preferences
-#         recommended_products = Items.query.filter(Items.category.in_(categories)).order_by(Items.item_star.desc()).limit(5).all()
-#
-#         #fetch user's wishlist items
-#         wishlist_items = Wishlist.query.filter_by(user_id=user.id).all()
-#
-#         # Extract item IDs from wishlist items
-#         item_ids = [item.item_id for item in wishlist_items]
-#
-#         # Fetch wishlist products based on item IDs
-#         wishlist_products = Items.query.filter(Items.Item_ID.in_(item_ids)).all()
-#
-#         grouped_order_history = group_orders_by_date(order_history)
-#
-#         return render_template('dashboard.html', username=username, grouped_order_history=grouped_order_history,
-#                                recommended_products=recommended_products, wishlist_products=wishlist_products,
-#                                order_history=order_history)
-#     else:
-#         return redirect(url_for('login'))
+
 
 
 
@@ -228,11 +197,23 @@ def dashboard():
         # Group order history by date
         grouped_order_history = group_orders_by_date(order_history)
 
+        notifications = fetch_notifications_for_user(user.id)
+
         return render_template('dashboard.html', username=username, grouped_order_history=grouped_order_history,
                                recommended_products=recommended_products, wishlist_products=wishlist_products,
-                               order_history=order_history)
+                               order_history=order_history,notifications=notifications)
     else:
         return redirect(url_for('login'))
+
+def fetch_notifications_for_user(user_id):
+    try:
+        # Query notifications where the user is the receiver
+        notifications = Notification.query.filter_by(receiver_id=user_id).order_by(Notification.timestamp.desc()).all()
+        return notifications
+    except Exception as e:
+        return None, f'Error fetching notifications: {str(e)}'
+    
+#################################################### ORDER HISTORY ##################################
 
 @app.route('/order_history')
 def order_history():
@@ -273,6 +254,8 @@ def group_orders_by_time(order_history):
 
     return grouped_orders
 
+
+################################### WISHLIST ########################################
 
 @app.route('/add_to_wishlist', methods=['POST'])
 def add_to_wishlist():
@@ -338,7 +321,7 @@ def logout():
     # Redirect the user to the login page or any other page you want
     return redirect(url_for('login'))
 
-
+########################################################## CART ##############################
 
 @app.route('/add_to_cart', methods=['POST'])
 def add_to_cart():
@@ -437,7 +420,7 @@ def remove_from_cart(item_id):
 
         return redirect(url_for('cart'))
 
-
+#################################### CHECKOUT ################################
 @app.route('/checkout', methods=['GET', 'POST'])
 def checkout():
     if 'username' not in session:
@@ -574,7 +557,7 @@ def track_order():
 # Route to render the compare page
 
 
-
+########################################################## COMPARE ###########################
 
 
 @app.route('/compare', methods=['GET', 'POST'])
@@ -598,6 +581,8 @@ def compare_items():
     return render_template('compare.html', items=items) 
 
 
+
+####################################################### ORDER STATUS UPDATE ####################
 @app.route('/admin/login', methods=['GET', 'POST'])
 def admin_login():
     if request.method == 'POST':
@@ -637,6 +622,8 @@ def update_order_status(order_id):
         flash('Order not found', 'error')
     return redirect(url_for('admin_dashboard'))
 
+
+####################################################### EXPENSES ######################################
 @app.route('/total_expenses')
 def total_expenses():
     username = session.get('username')
@@ -703,6 +690,10 @@ def view_expenses():
 
     return render_template('view_expenses.html', username=username, orders=orders, selected_year=year, selected_month=month)
 
+
+
+################################################### CHAT ############################################
+
 @app.route('/chat')
 def chat():
     return render_template('chat.html')
@@ -753,6 +744,7 @@ def send_message():
     # Return the response as JSON
     return jsonify({'response': response})
 
+################################################# POINTS ########################################
 
 @app.route('/non_stop_points', methods=['GET', 'POST'])
 def non_stop_points():
@@ -778,6 +770,8 @@ def non_stop_points():
 
     return render_template('non_stop_points.html', user=user, vouchers=vouchers)
 
+
+################################################# FRIEND ########################################
 @app.route('/add_friend', methods=['GET'])
 def add_friend():
     current_username = session.get('username')
@@ -869,3 +863,42 @@ def remove_friend(friend_id):
     
     # Redirect back to the page displaying the friend list
     return redirect(url_for('view_friends'))
+
+
+def send_notification(sender, receiver, message):
+    notification = Notification(sender=sender, receiver=receiver, message=message)
+    db.session.add(notification)
+    db.session.commit()
+
+@app.route('/gift_points_to_friend/<int:friend_id>', methods=['POST'])
+def gift_points_to_friend(friend_id):
+    sender = User.query.filter_by(username=session.get('username')).first()
+    if sender is None:
+        return redirect(url_for('login'))  
+
+    # Retrieve the selected points to gift from the form data
+    points_to_gift = int(request.form['points'])
+
+    # Retrieve the friend from the database
+    friend = User.query.get(friend_id)
+    if friend is None:
+        flash('Friend not found.', 'error')
+        return redirect(url_for('view_friends'))
+
+    # Check if the sender has enough points to gift
+    if sender.points < points_to_gift:
+        flash('Not enough points to gift.', 'error')
+        return redirect(url_for('view_friends'))
+
+    # Deduct points from the sender
+    sender.points -= points_to_gift
+
+    # Add points to the friend
+    friend.points += points_to_gift
+    send_notification(sender, friend, f'You received {points_to_gift} points from {sender.username}.')
+    # Commit changes to the database
+    db.session.commit()
+
+    flash(f'{points_to_gift} points successfully gifted to {friend.username}.', 'success')
+    return redirect(url_for('view_friends'))
+
