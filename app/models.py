@@ -47,7 +47,7 @@ class User(db.Model):
     email = db.Column(db.String(120), unique=True, nullable=False)
     password = db.Column(db.String(80), nullable=False)
     points = db.Column(db.Integer, default=0)
-    
+
     vouchers = db.relationship('Voucher', secondary=user_vouchers,
                                backref=db.backref('users', lazy='dynamic'))
 
@@ -61,7 +61,7 @@ class User(db.Model):
 
     def __repr__(self):
         return f"<User(username='{self.username}', points='{self.points}')>"
-
+    
 class UserPreference(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
@@ -146,3 +146,13 @@ class Voucher(db.Model):
     def __repr__(self):
         return f'<Voucher {self.type} - {self.discount}% off>'
 
+
+class Notification(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    sender_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    receiver_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    message = db.Column(db.String(255), nullable=False)
+    timestamp = db.Column(db.DateTime, default=datetime.utcnow)
+
+    sender = db.relationship('User', foreign_keys=[sender_id])
+    receiver = db.relationship('User', foreign_keys=[receiver_id])

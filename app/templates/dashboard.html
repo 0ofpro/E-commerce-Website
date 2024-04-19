@@ -128,6 +128,29 @@
         .friend-buttons .friend-btn:hover {
             background-color: #005F6B;
         }
+
+        /* Additional styles for notification button */
+        .notification-button-container {
+            display: flex;
+            justify-content: center;
+            margin-top: 20px; /* Adjust as needed */
+        }
+
+        .notification-button-container button {
+            padding: 10px 20px;
+            font-size: 16px;
+            background-color: #5f769f;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .notification-button-container button:hover {
+            background-color: #80bec6;
+        }
+        
     </style>
 
     <div class="content">
@@ -137,9 +160,18 @@
                 <div class="welcome-container">
                     <h1>Welcome, {{ username }}!</h1>
                 </div>
+                <div class="notification-button-container">
+                    <button id="notification-btn">Notifications 🔔</button>
+                    <!-- Notification Dropdown -->
+                    <div id="notification-dropdown" class="dropdown-content">
+                        {% for notification in notifications %}
+                            <p>{{ notification.message }}</p>
+                        {% endfor %}
+                    </div>
+                </div>
 
                 <!-- Friend buttons -->
-                <div class="friend-buttons">
+                <br><br><div class="friend-buttons">
                     <a href="/add_friend" class="friend-btn">Add Friend</a>
                     <a href="/view_friends" class="friend-btn">View Friends</a>
                 </div>
@@ -194,4 +226,18 @@
             </div>
         </div>
     </div>
+    <script>
+        // Function to toggle visibility of notification dropdown
+        function toggleNotificationDropdown() {
+            var dropdown = document.getElementById("notification-dropdown");
+            if (dropdown.style.display === "block") {
+                dropdown.style.display = "none";
+            } else {
+                dropdown.style.display = "block";
+            }
+        }
+    
+        // Add event listener to notification button
+        document.getElementById("notification-btn").addEventListener("click", toggleNotificationDropdown);
+    </script>
 {% endblock %}
