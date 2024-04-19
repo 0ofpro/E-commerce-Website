@@ -1,17 +1,8 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+{% extends "base.html" %}
+
+{% block content %}
     <title>Add Friends</title>
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f9f9f9;
-            margin: 0;
-            padding: 20px;
-        }
-
         .container {
             max-width: 600px;
             margin: 0 auto;
@@ -59,6 +50,7 @@
 
         .search-results h2 {
             margin-bottom: 10px;
+            text-align: center;
         }
 
         .search-results ul {
@@ -73,59 +65,28 @@
             justify-content: space-between; /* Align items to the right */
         }
 
-        .add-button {
-            background-color: #4CAF50;
-            color: white;
-            padding: 8px 16px;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            transition: background-color 0.3s ease;
-        }
-
-        .add-button:hover {
-            background-color: #45a049;
-        }
-
-        .back-button {
-            display: block;
-            margin-top: 20px;
-            text-align: center;
-            text-decoration: none;
-            background-color: #7e57c2; /* Purple color */
-            color: #fff;
-            padding: 10px 20px;
-            border-radius: 5px;
-            transition: background-color 0.3s ease;
-        }
-
-        .back-button:hover {
-            background-color: #5d4095; /* Darker purple color on hover */
-        }
     </style>
 </head>
 <body>
-    <div class="container">
-        <h1>Add Friends</h1>
+    <br><br><div class="container">
+        <h2>Add Friends</h2>
         
         <!-- Search form -->
         <form class="search-form" action="/add_friend" method="GET">
             <input class="search-input" type="text" name="search_query" placeholder="Enter username...">
-            <button class="search-button" type="submit">Search</button>
+            <button class="all-products-button" type="submit">Search</button>
         </form>
-        <!-- Button to go back to dashboard -->
-        <a href="{{ url_for('dashboard', username=session.get('username')) }}" class="back-button">Dashboard</a>
         
         <!-- Display search results -->
         <div class="search-results">
             {% if users %}
-                <h2>Search Results</h2>
+                <h4>Search Results...</h4>
                 <ul>
                     {% for user in users %}
                         <li>
                             <div>{{ user.username }}</div>
                             <form action="/add_friend/{{ user.id }}/add" method="POST">
-                                <button class="add-button" type="submit">Add Friend</button>
+                                <button class="search-button" type="submit">Add Friend</button>
                             </form>
                         </li>
                     {% endfor %}
@@ -140,4 +101,4 @@
 
     </div>
 </body>
-</html>
+{% endblock %}

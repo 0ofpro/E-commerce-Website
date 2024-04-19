@@ -1,17 +1,8 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+{% extends "base.html" %}
+
+{% block content %}
     <title>View Friends</title>
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f9f9f9;
-            margin: 0;
-            padding: 20px;
-        }
-
         .container {
             max-width: 600px;
             margin: 0 auto;
@@ -53,7 +44,7 @@
         }
 
         .remove-button {
-            background-color: #ff6347; /* Red color */
+            background-color: #edc3bc; /* Red color */
             color: #fff;
             padding: 5px 10px;
             border: none;
@@ -71,7 +62,7 @@
             margin: 20px auto 0; /* Center the button horizontally and add some space at the top */
             text-align: center;
             text-decoration: none;
-            background-color: #7e57c2; /* Purple color */
+            background-color: #008CBA; /* Purple color */
             color: #fff;
             padding: 10px 20px;
             border-radius: 5px;
@@ -79,14 +70,12 @@
         }
 
         .dashboard-button:hover {
-            background-color: #5d4095; /* Darker purple color on hover */
+            background-color: #005F6B; /* Darker purple color on hover */
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <h1>View Friends</h1>
-
+    <br><br><div class="container">
         <div class="friend-list">
             <h2>Friend List</h2>
             <ul>
@@ -105,4 +94,4 @@
         <a href="{{ url_for('dashboard', username=session.get('username')) }}" class="dashboard-button">Dashboard</a>
     </div>
 </body>
-</html>
+{% endblock %}

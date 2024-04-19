@@ -75,6 +75,7 @@
 
         .product-button a,
         .product-button button {
+            margin: 0 5px;
             padding: 4px 8px; /* Adjusted padding */
             font-size: 12px; /* Adjusted font size */
             background-color: #008CBA;
@@ -156,7 +157,7 @@
                             <h4>{{ product.name }}</h4>
                             <p>Category: {{ product.category }}</p>
                             <div class="product-button">
-                                <a href="/product/{{ product.Item_ID }}">Show Products</a>
+                                <a href="/product/{{ product.Item_ID }}">Show Product</a>
                                 <form action="{{ url_for('add_to_wishlist') }}" method="POST">
                                     <input type="hidden" name="item_id" value="{{ product.Item_ID }}">
                                     <input type="hidden" name="user_id" value="{{ user_id }}">
@@ -185,7 +186,7 @@
                             <form action="{{ url_for('remove_from_wishlist', item_id=item.Item_ID) }}" method="POST">
                                 <input type="hidden" name="item_id" value="{{ item.Item_ID }}">
                                 <input type="hidden" name="user_id" value="{{ user_id }}">
-                                <button type="submit">Remove from Wishlist</button>
+                                <button type="submit">Remove</button>
                             </form>
                         </div>
                     </div>

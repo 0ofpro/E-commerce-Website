@@ -531,6 +531,7 @@ def place_order():
         item = Items.query.filter_by(Item_ID=cart_item.item_id).first()
         if item:
             order.items.append(item)
+            item.stock -= 1 
 
         # Remove the item from the cart
         db.session.delete(cart_item)
