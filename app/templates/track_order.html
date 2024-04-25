@@ -29,7 +29,8 @@
     }
 
     .order {
-        width: calc(25% - 8px);
+        width:30%; /* Adjusted width */
+        height:380px;
         background-color: #f0ebeb;
         border: 1px solid #ddd;
         border-radius: 10px;
@@ -55,27 +56,48 @@
 
     .product-image {
         width: 100%;
-        height: auto;
+        height: 200px; /* Fixed height for all images */
+        object-fit: cover; /* Crop images if needed */
         margin-bottom: 10px;
         border-radius: 5px;
     }
 
     .order-details {
-        text-align: center;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-top: 10px;
     }
 
-    .order-details a {
-        display: inline-block;
-        padding: 8px 16px;
+    .refund-button {
+        padding: 6px 12px;
         background-color: #707ab0;
         color: #fff;
         text-decoration: none;
-        border-radius: 20px;
+        border-radius: 50px;
         transition: background-color 0.3s;
+        margin-top: -40px;
     }
 
-    .order-details a:hover {
+    .refund-button:hover {
         background-color: #484879;
+    }
+
+    .refund-button.disabled {
+        background-color: #ccc;
+        pointer-events: none;
+    }
+
+    .refund-not-possible {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-top: -30px; /* Adjust the value as needed */
+    }
+
+    .refund-not-possible p {
+        margin: 0;
+        color: #db7474;
     }
 </style>
 
@@ -85,6 +107,7 @@
         {% if order_history %}
             {% for order in order_history %}
                 <div class="order">
+                    <!-- Order details -->
                     <h3>Order ID: {{ order.id }}</h3>
                     <p>Status: {{ order.tracking_level }}</p>
                     <p>Total Price: ${{ order.total_price | round(2) }}</p>
@@ -94,14 +117,22 @@
                         <!-- Handle case when order.date_created is None -->
                     {% endif %}
 
+                    <!-- Product image -->
                     {% if order.items %}
                         <div class="product-image">
                             <img src="{{ order.items[0].pic }}" alt="Product Image" width="150">
                         </div>
                     {% endif %}
 
+                    <!-- Order details and refund button -->
                     <div class="order-details">
-                        <a href="/order_history">View Order Details</a>
+                        {% if order.tracking_level == 'Processing' %}
+                            <a href="/refund_order/{{ order.id }}" class="refund-button">Get Refund</a>
+                        {% else %}
+                            <div class="refund-not-possible">
+                                <p>Sorry, refund not possible as your product is on its way!</p>
+                            </div>
+                        {% endif %}
                     </div>
                 </div>
             {% endfor %}

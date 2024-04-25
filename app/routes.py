@@ -554,8 +554,29 @@ def track_order():
         return render_template('track_order.html', username=username, order_history=order_history)
     else:
         return redirect(url_for('login'))
-# Route to render the compare page
 
+
+@app.route('/refund_order/<int:order_id>')
+def refund_order(order_id):
+    order = Order.query.get(order_id)
+    if order and order.tracking_level == 'Processing':
+        return render_template('refund_order.html', order=order)
+    else:
+        return "Sorry, refund is not possible as your product is on its way!"
+
+@app.route('/submit_refund/<int:order_id>', methods=['POST'])
+def submit_refund(order_id):
+    order = Order.query.get(order_id)
+    if order:
+        reason = request.form.get('reason')
+        points1 = int(order.total_price) * 100  
+        user = User.query.get(order.user_id)
+        user.points -= points1  # Deduct points
+        db.session.delete(order)
+        db.session.commit()
+        return render_template('refund_success.html')
+    else:
+        return "Order not found!"
 
 ########################################################## COMPARE ###########################
 
@@ -733,7 +754,7 @@ def send_message():
             response = f"Sorry, I couldn't find any item matching '{item_name}'."
 
     # Check if the message asks how to contact the admin
-    elif "contact admin" in message.lower() or "how can i contact admin" in message.lower():
+    elif "contact" in message.lower() or "admin" in message.lower() or "help" in message.lower():
         response = "You can contact our admin via:\n"
         response += "Phone: +88 0123456789\n"
         response += "Main Office Address: 123, Dhanmondi, Dhaka"
