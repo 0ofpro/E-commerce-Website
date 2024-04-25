@@ -50,11 +50,17 @@
         color: #888;
     }
 
-    .product-image {
+    .product-image-container {
         width: 100%;
         height: 150px; /* Fixed height for all images */
-        object-fit: cover; /* Ensures images cover the entire space */
+        overflow: hidden;
         border-radius: 10px 10px 0 0;
+    }
+
+    .product-image {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
     }
 
     .product-button {
@@ -78,50 +84,43 @@
     .product-button button:hover {
         background-color: #0056b3;
     }
-
-    .productimage {
-        max-width: 100%;
-        height: auto;
-    }
 </style>
 
 <div class="content">
 
-        <!-- Order History Container -->
-        <div class="order-history-container">
-            <br><h2>Order History 🧾</h2>
-            <div class="products">
-                {% if grouped_order_history %}
-                    {% for order_date, orders in grouped_order_history.items() %}
-                        <div class="order-group">
-                            <h5>Order {{ loop.index }} </h5>
-                            {% for order in orders %}
-                                <div class="product">
+    <!-- Order History Container -->
+    <div class="order-history-container">
+        <br><h2>Order History 🧾</h2>
+        <div class="products">
+            {% if grouped_order_history %}
+                {% for order_date, orders in grouped_order_history.items() %}
+                    <div class="order-group">
+                        <h5>Order {{ loop.index }} </h5>
+                        {% for order in orders %}
+                            <div class="product">
+                                <div class="product-image-container">
                                     {% if order.items %}
-                                        <img src="{{ order.items[0].pic }}" alt="Product Image" class="productimage">
+                                        <img src="{{ order.items[0].pic }}" alt="Product Image" class="product-image">
                                     {% else %}
                                         <!-- Handle case when order has no items -->
                                     {% endif %}
-                                    <div class="product-details">
-                                        
-                                        <p>Total Price: ${{ order.total_price | round(2) }}</p>
-                                        {% if order.date_created %}
-                                            <p>Order Date: {{ order.date_created.strftime('%Y-%m-%d %H:%M:%S') }}</p>
-                                        {% else %}
-                                            <!-- Handle case when order.date_created is None -->
-                                        {% endif %}
-                                        
-                                        
-                                    </div>
                                 </div>
-                            {% endfor %}
-                        </div>
-                    {% endfor %}
-                {% else %}
-                    <p>No order history available.</p>
-                {% endif %}
-            </div>
+                                <div class="product-details">
+                                    <p>Total Price: ${{ order.total_price | round(2) }}</p>
+                                    {% if order.date_created %}
+                                        <p>Order Date: {{ order.date_created.strftime('%Y-%m-%d %H:%M:%S') }}</p>
+                                    {% else %}
+                                        <!-- Handle case when order.date_created is None -->
+                                    {% endif %}
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                {% endfor %}
+            {% else %}
+                <p>No order history available.</p>
+            {% endif %}
         </div>
-        </div>
+    </div>
 </div>
 {% endblock %}
